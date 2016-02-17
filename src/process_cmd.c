@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/17 14:12:07 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/17 14:33:11 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,10 +182,10 @@ int		do_pipe(t_tree *tree, t_env *env, t_env *new)
 		close(fd_pipe[1]);
 		dup2(fd_pipe[0], 0);
 
-		fputs("PROUT\n", stderr);
 		process_cmd(tree->child[1], env, new);
 		close(fd_pipe[0]);
 		dup2(fd_sav, 0);
+		eprintf("COUCOU");
 		exit(0);
 	}
 	else
@@ -195,12 +195,12 @@ int		do_pipe(t_tree *tree, t_env *env, t_env *new)
 		close(fd_pipe[0]);
 		dup2(fd_pipe[1], 1);
 
-		fputs("prout\n", stderr);
 		process_cmd(tree->child[0], env, new);
 
 		close(fd_pipe[1]);
 		dup2(fd_sav, 1);
 
+		eprintf("coucou");
 		while (waitpid(pid, &stat_loc, WNOHANG) == 0)
 			;
 	}
