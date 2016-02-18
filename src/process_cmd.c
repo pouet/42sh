@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/17 14:33:11 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/18 11:58:31 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,9 @@ int		fork_process(t_tree *tree, t_env *env, t_env *new)
 
 	oper_redirection(tree);
 
-/*	dup2(tree->fd[0], 0);
+	dup2(tree->fd[0], 0);
 	dup2(tree->fd[1], 1);
-	dup2(tree->fd[2], 2);*/
+	dup2(tree->fd[2], 2);
 	if (tree->child[0]->token->sym == S_BUILTIN)
 	{
 		i = 0;
@@ -170,37 +170,25 @@ int		do_pipe(t_tree *tree, t_env *env, t_env *new)
 
 	if (pipe(fd_pipe) < 0)
 		return (eprintf("error: cannot create pipe\n"));
-//	tree->child[0]->fd[1] = fd_pipe[1];
-//	tree->child[1]->fd[0] = fd_pipe[0];
 	pid = fork();
 	if (pid < 0)
 		eprintf("error: fork failed\n");
 	else if (pid == 0)
 	{
-		fd_sav = dup(0);
-
-		close(fd_pipe[1]);
-		dup2(fd_pipe[0], 0);
-
-		process_cmd(tree->child[1], env, new);
 		close(fd_pipe[0]);
-		dup2(fd_sav, 0);
-		eprintf("COUCOU");
+		dup2(fd_pipe[1], 1);
+		close(fd_pipe[1]);
+		process_cmd(tree->child[0], env, new);
 		exit(0);
 	}
 	else
 	{
-		fd_sav = dup(1);
-
-		close(fd_pipe[0]);
-		dup2(fd_pipe[1], 1);
-
-		process_cmd(tree->child[0], env, new);
-
+		fd_sav = dup(0);
 		close(fd_pipe[1]);
-		dup2(fd_sav, 1);
-
-		eprintf("coucou");
+		dup2(fd_pipe[0], 0);
+		close(fd_pipe[0]);
+		process_cmd(tree->child[1], env, new);
+		dup2(fd_sav, 0);
 		while (waitpid(pid, &stat_loc, WNOHANG) == 0)
 			;
 	}
@@ -229,20 +217,6 @@ int		process_cmd(t_tree *tree, t_env *env, t_env *new)
 		else if (tree->type == T_PIPE)
 		{
 			do_pipe(tree, env, new);
-//			if (do_pipe(tree->child[0], tree->child[1]) >= 0)
-//			{
-/*				process_cmd(tree->child[0], env, new);
-//				ft_printf_fd(tree->child[0]->fd[1], "%c", EOF);
-//				close(tree->child[1]->fd[1]);
-//				close(tree->child[0]->fd_pipetoclose);
-				close(tree->child[0]->fd_pipetoclose[1]);
-				process_cmd(tree->child[1], env, new);
-//				ft_printf_fd(tree->child[1]->fd[0], "%c", EOF);
-//				printf("%c", EOF);
-//				close(tree->child[0]->fd_pipetoclose[0]);
-				close(tree->child[1]->fd_pipetoclose[1]);
-//				close(tree->child[1]->fd_pipetoclose);*/
-//			}
 		}
 		else
 			eprintf("42sh: %s: %s\n", tree->child[0]->token->s,
