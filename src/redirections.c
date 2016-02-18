@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/16 14:36:25 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/18 16:09:44 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,30 @@ int		dup_out(t_tree *tree, char *redir, char *word)
 	return (0);
 }
 
+int		heredoc(t_tree *tree, char *redir, char *word)
+{
+	int		fd_src;
+	int		fd_dst;
+	char	*line;
+
+	fd_dst = 1;
+	fd_src = 1;
+	if (ft_isdigit(*redir))
+	{
+		fd_dst = 0;
+		while (ft_isdigit(*redir) && fd_dst <= MAX_FD)
+			fd_dst = fd_dst * 10 + *redir++ - '0';
+		if (fd_dst >= MAX_FD)
+			return (eprintf("error: bad file descriptor\n"));
+	}
+	if (ft_strcmp(word, "-") == 0)
+	{
+		close(fd_dst);
+		return (0);
+	}
+	return (0);
+}
+
 int		cmd_redirection(t_tree *tree)
 {
 	char	s[BUFF_SZ + 1];
@@ -186,6 +210,8 @@ int		cmd_redirection(t_tree *tree)
 				dup_in(tree, tree->child[i]->token->s, s);
 			else if (tree->child[i]->token->sym == S_DUPOUT)
 				dup_out(tree, tree->child[i]->token->s, s);
+			else if (tree->child[i]->token->sym == S_HERESTR)
+				heredoc(tree, tree->child[i]->token->s, s);
 			{
 				for (int k = i; k < j; k++)
 				{

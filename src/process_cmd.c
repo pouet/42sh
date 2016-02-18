@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/18 11:58:31 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/18 15:32:26 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ int		find_cmd(t_token *token, t_env *env)
 
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 int		fork_process(t_tree *tree, t_env *env, t_env *new)
 {
 	pid_t	pid;
@@ -119,9 +120,9 @@ int		fork_process(t_tree *tree, t_env *env, t_env *new)
 
 	oper_redirection(tree);
 
-	dup2(tree->fd[0], 0);
+/*	dup2(tree->fd[0], 0);
 	dup2(tree->fd[1], 1);
-	dup2(tree->fd[2], 2);
+	dup2(tree->fd[2], 2);*/
 	if (tree->child[0]->token->sym == S_BUILTIN)
 	{
 		i = 0;
@@ -139,6 +140,14 @@ int		fork_process(t_tree *tree, t_env *env, t_env *new)
 		{
 			char **av = tree_totab(tree);
 			char **environ = env_totab(new);
+
+			signal (SIGINT, SIG_DFL);
+			signal (SIGQUIT, SIG_DFL);
+			signal (SIGTSTP, SIG_DFL);
+			signal (SIGTTIN, SIG_DFL);
+			signal (SIGTTOU, SIG_DFL);
+			signal (SIGCHLD, SIG_DFL);
+
 			if (execve(av[0], av, environ) < 0)
 				eprintf("error: cannot create processus\n");
 		}
