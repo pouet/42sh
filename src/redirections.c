@@ -6,221 +6,151 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/18 16:09:44 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 10:51:40 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/syslimits.h>
+#include <limits.h>
 #include "libft.h"
 #include "redirections.h"
 #include "lexer.h"
 #include "parser.h"
 #include "error.h"
 
-int		redir_in(t_tree *tree, char *redir, char *word)
+int		get_nbr(char *s, char **t)
 {
-	int		fd;
-	int		fd_src;
+	int				sign;
+	unsigned long	n;
 
-	fd_src = 0;
-	if (ft_isdigit(*redir))
+	n = 0;
+	sign = 1;
+	if (*s == '-')
+		sign = -1 * (*s++ == '-');
+	while (n < (unsigned long)INT_MAX + 1 && ft_isdigit(*s))
+		n = n * 10 + *s++ - '0';
+	if (n > (unsigned long)INT_MAX ||
+		(n > (unsigned long)INT_MAX + 1 && sign < 0))
 	{
-		while (ft_isdigit(*redir) && fd_src <= MAX_FD)
-			fd_src = fd_src * 10 + *redir++ - '0';
-		if (fd_src >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
+		n = INT_MAX;
+		s--;
 	}
-	fd = open(word, O_RDONLY);
-	if (fd < 0)
-		/* TODO: gerer mieux les erreurs */
-		return (eprintf("error: bad file descriptor\n"));
-	dup2(fd, fd_src);
-	return (0);
+	*t = s;
+	return (n * sign);
 }
 
-int		redir_out(t_tree *tree, char *redir, char *word)
+int		redir(t_symbol sym, char *redir, char *word)
 {
 	int		fd;
 	int		fd_src;
+	char	*tmp;
 
-	fd_src = 1;
-	if (ft_isdigit(*redir))
-	{
-		fd_src = 0;
-		while (ft_isdigit(*redir) && fd_src <= MAX_FD)
-			fd_src = fd_src * 10 + *redir++ - '0';
-		if (fd_src >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
-	}
-	fd = open(word, O_WRONLY | O_CREAT | O_TRUNC,
+	fd = 0;
+	tmp = redir;
+	fd_src = get_nbr(tmp, &redir);
+	if (tmp == redir)
+		fd_src = (sym != S_REDIRIN);
+	if ((*redir != '>' && *redir != '<') || fd_src >= OPEN_MAX)
+		return (eprintf("error: %s: %s\n", redir, g_error[E_BADFD]));
+	if (sym == S_REDIRIN)
+		fd = open(word, O_RDONLY);
+	else if (sym == S_REDIROUT)
+		fd = open(word, O_WRONLY | O_CREAT | O_TRUNC,
+				S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+	else if (sym == S_APPENDOUT)
+		fd = open(word, O_WRONLY | O_CREAT | O_APPEND,
 			S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 	if (fd < 0)
 		/* TODO: gerer mieux les erreurs */
-		return (eprintf("error: bad file descriptor\n"));
+		return (eprintf("error: %s: unable to open the file\n", redir));
 	dup2(fd, fd_src);
 	return (0);
 }
 
-int		append_out(t_tree *tree, char *redir, char *word)
-{
-	int		fd;
-	int		fd_src;
-
-	fd_src = 1;
-	if (ft_isdigit(*redir))
-	{
-		fd_src = 0;
-		while (ft_isdigit(*redir) && fd_src <= MAX_FD)
-			fd_src = fd_src * 10 + *redir++ - '0';
-		if (fd_src >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
-	}
-	fd = open(word, O_WRONLY | O_CREAT | O_APPEND,
-			S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
-	if (fd < 0)
-		/* TODO: gerer mieux les erreurs */
-		return (eprintf("error: appendout: bad file descriptor\n"));
-	dup2(fd, fd_src);
-	return (0);
-}
-
-int		dup_in(t_tree *tree, char *redir, char *word)
+int		dup_fd(t_symbol sym, char *redir, char *word)
 {
 	int		fd_src;
 	int		fd_dst;
+	char	*tmp;
 
-	fd_dst = 0;
-	if (ft_isdigit(*redir))
-	{
-		fd_dst = 0;
-		while (ft_isdigit(*redir) && fd_dst <= MAX_FD)
-			fd_dst = fd_dst * 10 + *redir++ - '0';
-		if (fd_dst >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
-	}
-	if (ft_isdigit(*word))
-	{
-		fd_src = 0;
-		while (ft_isdigit(*word) && fd_src <= MAX_FD)
-			fd_src = fd_src * 10 + *word++ - '0';
-		if (fd_src >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
-	}
+	tmp = redir;
+	fd_dst = get_nbr(tmp, &redir);
+	if (tmp == redir)
+		fd_dst = (sym != S_DUPIN);
+	if ((*redir != '>' && *redir != '<') || fd_dst >= OPEN_MAX)
+		return (eprintf("error: %s: %s\n", redir, g_error[E_BADFD]));
+	tmp = word;
+	fd_src = get_nbr(tmp, &word);
+	if (tmp == word)
+		fd_src = (sym != S_DUPIN);
+	if ((*word != '\0' && *word != '-') || fd_src >= OPEN_MAX)
+		return (eprintf("error: %s: %s\n", word, g_error[E_BADFD]));
 	else if (ft_strcmp(word, "-") == 0)
-	{
-		close(fd_dst);
-		return (0);
-	}
-	else
-		return (eprintf("error: %s: ambiguous redirect\n", word));
+		return (close(fd_dst));
 	dup2(fd_src, fd_dst);
 	return (0);
 }
 
-int		dup_out(t_tree *tree, char *redir, char *word)
+int		heredoc(t_symbol sym, char *redir, char *word)
 {
-	int		fd_src;
-	int		fd_dst;
-
-	fd_dst = 1;
-	fd_src = 1;
-	if (ft_isdigit(*redir))
-	{
-		fd_dst = 0;
-		while (ft_isdigit(*redir) && fd_dst <= MAX_FD)
-			fd_dst = fd_dst * 10 + *redir++ - '0';
-		if (fd_dst >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
-	}
-	if (ft_isdigit(*word))
-	{
-		fd_src = 0;
-		while (ft_isdigit(*word) && fd_src <= MAX_FD)
-			fd_src = fd_src * 10 + *word++ - '0';
-		if (fd_src >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
-	}
-	else if (ft_strcmp(word, "-") == 0)
-	{
-		close(fd_dst);
-		return (0);
-	}
-	else
-		return (eprintf("error: %s: ambiguous redirect\n", word));
-	dup2(fd_src, fd_dst);
+	(void)sym;
+	(void)redir;
+	(void)word;
 	return (0);
 }
 
-int		heredoc(t_tree *tree, char *redir, char *word)
+void	del_redir(t_tree *tree, int start, int end)
 {
-	int		fd_src;
-	int		fd_dst;
-	char	*line;
+	int		i;
 
-	fd_dst = 1;
-	fd_src = 1;
-	if (ft_isdigit(*redir))
+	i = start;
+	while (i < end)
 	{
-		fd_dst = 0;
-		while (ft_isdigit(*redir) && fd_dst <= MAX_FD)
-			fd_dst = fd_dst * 10 + *redir++ - '0';
-		if (fd_dst >= MAX_FD)
-			return (eprintf("error: bad file descriptor\n"));
+		tree->child[i]->type = T_NAME;
+		tree->child[i]->token->sym = S_SEPARATOR;
+		i++;
 	}
-	if (ft_strcmp(word, "-") == 0)
+}
+
+int		do_redirection(t_tree *tree, int i)
+{
+	char	s[BUFF_SZ + 1];
+	int		j;
+	int		ret;
+
+	ret = 0;
+	j = get_identifier(tree, i + 1, s);
+	if (i + 1 >= tree->nchild || s[0] == '\0')
 	{
-		close(fd_dst);
-		return (0);
+		g_errno = E_TOKSYNTAX;
+		return (eprintf("%s '%s'\n",
+					g_error[g_errno], tree->child[i]->token->s));
 	}
-	return (0);
+	if (tree->child[i]->token->sym == S_REDIRIN ||
+			tree->child[i]->token->sym == S_REDIROUT ||
+			tree->child[i]->token->sym == S_APPENDOUT)
+		ret = redir(tree->child[i]->token->sym, tree->child[i]->token->s, s);
+	else if (tree->child[i]->token->sym == S_DUPIN ||
+			tree->child[i]->token->sym == S_DUPOUT)
+		ret = dup_fd(tree->child[i]->token->sym, tree->child[i]->token->s, s);
+	else if (tree->child[i]->token->sym == S_HERESTR)
+		ret = heredoc(tree->child[i]->token->sym, tree->child[i]->token->s, s);
+	del_redir(tree, i, j);
+	return (ret);
 }
 
 int		cmd_redirection(t_tree *tree)
 {
-	char	s[BUFF_SZ + 1];
 	int		i;
-	int		j;
 
 	i = 1;
-	while (i < tree->nchild)
+	while (!g_errno && i < tree->nchild)
 	{
 		if (tree->child[i]->type == T_REDIR)
-		{
-			if (i + 1 >= tree->nchild)
-			{
-				g_errno = E_TOKSYNTAX;
-				eprintf("%s '%s'\n", g_error[g_errno], tree->child[i]->token->s);
-				return (-1);
-			}
-			j = get_identifier(tree, i + 1, s);
-			if (s[0] == '\0')
-			{
-				g_errno = E_TOKSYNTAX;
-				eprintf("%s '%s'\n", g_error[g_errno], tree->child[i]->token->s);
-				return (-1);
-			}
-			if (tree->child[i]->token->sym == S_REDIRIN)
-				redir_in(tree, tree->child[i]->token->s, s);
-			else if (tree->child[i]->token->sym == S_REDIROUT)
-				redir_out(tree, tree->child[i]->token->s, s);
-			else if (tree->child[i]->token->sym == S_APPENDOUT)
-				append_out(tree, tree->child[i]->token->s, s);
-			else if (tree->child[i]->token->sym == S_DUPIN)
-				dup_in(tree, tree->child[i]->token->s, s);
-			else if (tree->child[i]->token->sym == S_DUPOUT)
-				dup_out(tree, tree->child[i]->token->s, s);
-			else if (tree->child[i]->token->sym == S_HERESTR)
-				heredoc(tree, tree->child[i]->token->s, s);
-			{
-				for (int k = i; k < j; k++)
-				{
-					tree->child[k]->type = T_NAME;
-					tree->child[k]->token->sym = S_SEPARATOR;
-				}
-			}
-			i = j;
-		}
+			if (do_redirection(tree, i) < 0)
+				g_errno = E_BADFD;
 		i++;
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/18 11:51:11 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 11:04:18 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,9 @@
 t_tree	*tree_new(enum e_nodetype type, t_token *token)
 {
 	t_tree	*node;
-	int		i;
 
 	node = ft_memalloc(sizeof(*node));
 	node->type = type;
-	node->fd[0] = 0;
-	node->fd[1] = 1;
-	node->fd[2] = 2;
-	i = 3;
-	while (i < MAX_FD)
-	{
-		node->fd[i] = -1;
-		i++;
-	}
 	node->token = token;
 	return (node);
 }
@@ -173,7 +163,7 @@ t_tree	*identifiers(t_tree *tree, t_token *token, int *index)
 
 t_tree	*command(t_tree *tree, t_token *token, int *index)
 {
-	t_tree	*node;
+//	t_tree	*node;
 
 	while (found(token, index, S_LHOOK) || found(token, index, S_LBRACE)
 			|| found(token, index, S_LPAR))

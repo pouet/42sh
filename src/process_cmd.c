@@ -6,12 +6,17 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/18 15:32:26 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 12:06:19 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <signal.h>
 #include "libft.h"
+#include "ft_printf.h"
 #include "process_cmd.h"
 #include "lexer.h"
 #include "parser.h"
@@ -22,11 +27,11 @@
 #include "ft_exit.h"
 #include "redirections.h"
 
-t_builtinlist bt[NBUILTIN] = {
-	{ "env" , ft_env },
-	{ "cd" , ft_cd },
-	{ "exit" , ft_exit },
-	{ "setenv" , ft_setenv },
+t_builtinlist g_bt[NBUILTIN] = {
+	{ "env", ft_env },
+	{ "cd", ft_cd },
+	{ "exit", ft_exit },
+	{ "setenv", ft_setenv },
 	{ "unsetenv", ft_unsetenv }
 };
 
@@ -37,10 +42,47 @@ int		is_builtin(char *s)
 	i = 0;
 	while (i < NBUILTIN)
 	{
-		if (ft_strcmp(bt[i].name, s) == 0)
-			return (1);
+		if (ft_strcmp(g_bt[i].name, s) == 0)
+			return (i);
 		i++;
 	}
+	return (-1);
+}
+
+char	*create_path(char *file, char *path, char *s)
+{
+	int		len;
+	char	*p;
+
+	len = BUFF_SZ;
+	p = ft_strchr(path, ':');
+	if (p != NULL)
+		len = p - path;
+	ft_strncpy(file, path, len);
+	file[len] = '\0';
+	if (len == 0)
+		ft_strcpy(file, ".");
+	ft_strlcat(file, "/", BUFF_SZ);
+	ft_strlcat(file, s, BUFF_SZ);
+	return (p);
+}
+
+int		have_permission(char *cmd)
+{
+	struct stat	buf;
+	uid_t		uid;
+	gid_t		gid;
+
+	uid = getuid();
+	gid = getgid();
+	if (stat(cmd, &buf) < 0)
+		return (-1);
+	if ((buf.st_uid == uid && (buf.st_mode & S_IXUSR)) ||
+		(buf.st_gid == gid && (buf.st_mode & S_IXGRP)) ||
+		(buf.st_mode & S_IXOTH))
+		return (1);
+	g_errno = E_PERMISSION;
+	eprintf("%s: %s\n", cmd, g_error[g_errno]);
 	return (0);
 }
 
@@ -49,7 +91,6 @@ int		is_pathsearch(char *s, t_env *env)
 	t_env	*env_path;
 	char	*path;
 	char	*p;
-	int		len;
 	char	file[BUFF_SZ + 1];
 
 	path = "./";
@@ -58,16 +99,9 @@ int		is_pathsearch(char *s, t_env *env)
 		path = env_path->content + 5;
 	while (*path)
 	{
-		len = BUFF_SZ;
-		p = ft_strchr(path, ':');
-		if (p != NULL)
-			len = p - path;
-		ft_strncpy(file, path, len);
-		file[len] = '\0';
-		if (len == 0)
-			ft_strcpy(file, ".");
-		ft_strlcat(file, "/", BUFF_SZ);
-		ft_strlcat(file, s, BUFF_SZ);
+		p = create_path(file, path, s);
+		if (have_permission(file) == 0)
+			return (0);
 		if (access(file, X_OK) == 0)
 		{
 			ft_strcpy(s, file);
@@ -82,94 +116,97 @@ int		is_pathsearch(char *s, t_env *env)
 
 int		find_cmd(t_token *token, t_env *env)
 {
+	int		ret;
+
 	if (token == NULL)
 		return (0);
 	if (ft_strchr(token->s, '/'))
 	{
+		if (have_permission(token->s) == 0)
+			return (0);
 		if (access(token->s, X_OK) != 0)
 			return (0);
 		token->sym = S_COMMAND;
-		/* TODO: lancer la commande direct. Pas de builtin ni de PATH search */
 	}
 	else
 	{
-		if (is_builtin(token->s))
+		if ((ret = is_builtin(token->s)) >= 0)
+		{
 			token->sym = S_BUILTIN;
+			token->btin_num = ret;
+		}
 		else if (is_pathsearch(token->s, env))
 			token->sym = S_COMMAND;
 		else
 			return (0);
-		/* TODO: lancer built-in/PATH search */
 	}
 	return (1);
 }
 
-#include <sys/wait.h>
-#include <unistd.h>
-#include <signal.h>
+void	save_stdfd(int fd[3])
+{
+	fd[0] = dup(0);
+	fd[1] = dup(1);
+	fd[2] = dup(2);
+}
+
+void	restore_stdfd(int fd[3])
+{
+	dup2(fd[0], 0);
+	dup2(fd[1], 1);
+	dup2(fd[2], 2);
+}
+
+void	restore_sigdfl(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGTSTP, SIG_DFL);
+	signal(SIGTTIN, SIG_DFL);
+	signal(SIGTTOU, SIG_DFL);
+	signal(SIGCHLD, SIG_DFL);
+}
+
+int		launch_process(t_tree *tree, t_env *env)
+{
+	char		**av;
+	char		**environ;
+
+	av = tree_totab(tree);
+	environ = env_totab(env);
+	restore_sigdfl();
+	execve(av[0], av, environ);
+	eprintf("error: cannot create processus\n");
+	exit(1);
+}
+
 int		fork_process(t_tree *tree, t_env *env, t_env *new)
 {
 	pid_t	pid;
-	int		i;
+	int		fd_sav[3];
+	int		stat_loc;
 
-	int fd0, fd1, fd2;
-
-	fd0 = dup(0);
-	fd1 = dup(1);
-	fd2 = dup(2);
-
+	save_stdfd(fd_sav);
 	oper_redirection(tree);
-
-/*	dup2(tree->fd[0], 0);
-	dup2(tree->fd[1], 1);
-	dup2(tree->fd[2], 2);*/
 	if (tree->child[0]->token->sym == S_BUILTIN)
-	{
-		i = 0;
-		while (ft_strcmp(bt[i].name, tree->child[0]->token->s) != 0)
-			i++;
-		bt[i].f(env, tree);
-	}
+		g_bt[tree->child[0]->token->btin_num].f(env, tree);
 	else
 	{
 		pid = fork();
 		if (pid < 0)
 			eprintf("error: fork failed\n");
 		else if (pid == 0)
-			//		if (tree->child[0]->token->sym == S_COMMAND)
-		{
-			char **av = tree_totab(tree);
-			char **environ = env_totab(new);
-
-			signal (SIGINT, SIG_DFL);
-			signal (SIGQUIT, SIG_DFL);
-			signal (SIGTSTP, SIG_DFL);
-			signal (SIGTTIN, SIG_DFL);
-			signal (SIGTTOU, SIG_DFL);
-			signal (SIGCHLD, SIG_DFL);
-
-			if (execve(av[0], av, environ) < 0)
-				eprintf("error: cannot create processus\n");
-		}
+			launch_process(tree, new);
 		else
 		{
-			int stat_loc;
 			while (waitpid(pid, &stat_loc, WNOHANG) == 0)
 				;
 		}
 	}
-//	close(0);
-//	close(1);
-//	close(2);
-//	close(tree->fd[0]);
-//	close(tree->fd[1]);
-//	close(tree->fd[2]);
-	dup2(fd0, 0);
-	dup2(fd1, 1);
-	dup2(fd2, 2);
+	restore_stdfd(fd_sav);
 	return (0);
 }
-#include <stdio.h>
+
 int		do_pipe(t_tree *tree, t_env *env, t_env *new)
 {
 	int		fd_pipe[2];
@@ -203,18 +240,16 @@ int		do_pipe(t_tree *tree, t_env *env, t_env *new)
 	}
 	return (0);
 }
-#include <stdio.h>
-#include "ft_printf.h"
+
 int		process_cmd(t_tree *tree, t_env *env, t_env *new)
 {
 	if (tree)
 	{
 		if (tree->type == T_CMD)
 		{
-			/* TODO: lancer la commande avec les arguments */
 			if (find_cmd(tree->child[0]->token, env) != 0)
 				fork_process(tree, env, new);
-			else
+			else if (g_errno == E_NOERROR)
 				eprintf("42sh: %s: %s\n", tree->child[0]->token->s,
 						g_error[E_UNKCMD]);
 		}
@@ -224,10 +259,8 @@ int		process_cmd(t_tree *tree, t_env *env, t_env *new)
 			process_cmd(tree->child[1], env, new);
 		}
 		else if (tree->type == T_PIPE)
-		{
 			do_pipe(tree, env, new);
-		}
-		else
+		else if (g_errno == E_NOERROR)
 			eprintf("42sh: %s: %s\n", tree->child[0]->token->s,
 					g_error[E_UNKCMD]);
 	}

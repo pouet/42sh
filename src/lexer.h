@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:18:33 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/11 15:35:33 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 11:07:32 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct		s_token
 	int				num;
 	char			s[BUFF_SZ + 1];
 	size_t			slen;
+	unsigned		btin_num;
 }					t_token;
 
 extern t_string		g_symbol[S_MAX + 1];

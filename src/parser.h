@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:47 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/18 11:51:05 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 11:02:56 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 ** TODO: faire 1 constante par parenthese/crochet/accolade
 **       -> virer T_BRACE et creer 3
 */
-
-# define MAX_FD 0xFF
 
 enum				e_nodetype
 {
@@ -39,7 +37,6 @@ typedef struct		s_tree
 	struct s_tree	*child[BUFF_SZ];
 	int				nchild;
 	t_token			*token;
-	int				fd[MAX_FD + 1];
 }					t_tree;
 
 t_tree				*parser(t_token *token);
