@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 14:29:30 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 11:28:16 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 14:34:52 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,16 @@
 
 typedef t_env *(*t_builtinfct)(t_env *, t_tree *);
 
-typedef struct
+typedef struct			s_builtinlist
 {
-	char			*name;
-	t_builtinfct	f;
-//	t_env	*(*f)(t_env *, t_tree *);
-}					t_builtinlist;
+	char				*name;
+	t_builtinfct		f;
+}						t_builtinlist;
 
-#define NBUILTIN 5
+# define NBUILTIN 5
 
-extern t_builtinlist g_bt[NBUILTIN];
+extern t_builtinlist	g_bt[NBUILTIN];
 
-int		process_cmd(t_tree *tree, t_env *env, t_env *new);
+int						process_cmd(t_tree *tree, t_env *env, t_env *new);
 
 #endif

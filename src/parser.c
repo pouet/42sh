@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 12:29:08 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 14:31:25 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,22 @@ t_tree	*tree_new(enum e_nodetype type, t_token *token)
 	node->type = type;
 	node->token = token;
 	return (node);
+}
+
+void	deltree(t_tree *tree)
+{
+	int	i;
+
+	if (tree)
+	{
+		i = 0;
+		while (i < tree->nchild)
+		{
+			deltree(tree->child[i]);
+			i++;
+		}
+		free(tree);
+	}
 }
 
 void	next_token(t_token *token, int *index)
@@ -173,8 +189,6 @@ t_tree	*identifiers(t_tree *tree, t_token *token, int *index)
 
 t_tree	*command(t_tree *tree, t_token *token, int *index)
 {
-//	t_tree	*node;
-
 	while (found(token, index, S_LHOOK) || found(token, index, S_LBRACE)
 			|| found(token, index, S_LPAR))
 		tree = factor(tree, token, index);
@@ -196,14 +210,14 @@ t_tree	*parser(t_token *token)
 	tree = NULL;
 	tree = command(tree, token, &index);
 	if (g_errno)
-		/* TODO: tout free */
 	{
+		deltree(tree);
 		return (NULL);
 	}
 	if (!found(token, &index, S_EOL))
 	{
+		deltree(tree);
 		eprintf("syntax error near unexpected token '%s'\n", token[index].s);
-		/* TODO: tout free */
 		return (NULL);
 	}
 	return (tree);
@@ -245,20 +259,4 @@ int		get_identifier(t_tree *tree, int i, char *s)
 				tree->child[i]->token->sym == S_EQUAL))
 		ft_strlcat(s, tree->child[i++]->token->s, BUFF_SZ);
 	return (i);
-}
-
-void	deltree(t_tree *tree)
-{
-	int	i;
-
-	if (tree)
-	{
-		i = 0;
-		while (i < tree->nchild)
-		{
-			deltree(tree->child[i]);
-			i++;
-		}
-		free(tree);
-	}
 }

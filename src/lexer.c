@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:25:49 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/16 12:09:55 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 14:40:54 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,26 +62,22 @@ char	*get_quoted_string(t_token *token, char *s)
 
 char	*get_redir(t_token *token, char *s)
 {
-	char	*t;
-	int		i;
+	const int	tab[] = { S_HEREDOC, S_APPENDOUT, S_DUPIN, S_DUPOUT, S_REDIRIN,
+		S_REDIROUT };
+	char		*t;
+	int			i;
 
 	t = s;
 	token->sym = S_UNKNOWN;
-	i = 0;
 	while (*s && ft_isdigit(*s))
 		s++;
-	if (!ft_strncmp(s, g_symbol[S_HEREDOC].s, g_symbol[S_HEREDOC].len))
-		token->sym = S_HEREDOC;
-	else if (!ft_strncmp(s, g_symbol[S_APPENDOUT].s, g_symbol[S_APPENDOUT].len))
-		token->sym = S_APPENDOUT;
-	else if (!ft_strncmp(s, g_symbol[S_DUPIN].s, g_symbol[S_DUPIN].len))
-		token->sym = S_DUPIN;
-	else if (!ft_strncmp(s, g_symbol[S_DUPOUT].s, g_symbol[S_DUPOUT].len))
-		token->sym = S_DUPOUT;
-	else if (!ft_strncmp(s, g_symbol[S_REDIRIN].s, g_symbol[S_REDIRIN].len))
-		token->sym = S_REDIRIN;
-	else if (!ft_strncmp(s, g_symbol[S_REDIROUT].s, g_symbol[S_REDIROUT].len))
-		token->sym = S_REDIROUT;
+	i = 0;
+	while (token->sym == S_UNKNOWN && i < sizeof(tab) / sizeof(*tab))
+	{
+		if (!ft_strncmp(s, g_symbol[tab[i]].s, g_symbol[tab[i]].len))
+			token->sym = tab[i];
+		i++;
+	}
 	if (token->sym == S_UNKNOWN)
 		return (t);
 	s += g_symbol[token->sym].len;
