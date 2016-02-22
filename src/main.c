@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 14:46:43 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 16:29:40 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "error.h"
 #include "process_cmd.h"
 #include "redirections.h"
+#include "initterms.h"
 
 void	putprompt(void)
 {

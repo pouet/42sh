@@ -6,13 +6,13 @@
 #    By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/01 10:58:46 by nchrupal          #+#    #+#              #
-#    Updated: 2016/02/11 12:25:22 by nchrupal         ###   ########.fr        #
+#    Updated: 2016/02/22 16:29:29 by nchrupal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC_NAME = $(sort main.c lexer.c parser.c ft_env.c expand.c error.c\
 		   process_cmd.c get_opts.c ft_setenv.c ft_cd.c ft_exit.c\
-		   redirections.c)
+		   redirections.c events.c xmalloc.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 LIBFT_PATH = ./libft/
