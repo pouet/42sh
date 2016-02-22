@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 10:51:40 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 12:24:46 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ int		do_redirection(t_tree *tree, int i)
 	j = get_identifier(tree, i + 1, s);
 	if (i + 1 >= tree->nchild || s[0] == '\0')
 	{
-		g_errno = E_TOKSYNTAX;
+		g_errno = E_SYNTAX;
 		return (eprintf("%s '%s'\n",
 					g_error[g_errno], tree->child[i]->token->s));
 	}

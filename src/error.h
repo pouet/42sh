@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 10:10:33 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 11:52:47 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 12:24:22 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,12 @@
 # define XE04  X( E_OPTION,     "unknown option -- ")
 # define XE05  X( E_NOFORDIR,   "no such file or directory")
 # define XE06  X( E_ISNODIR,    "not a directory")
-# define XE07  X( E_TOKSYNTAX,  "syntax error near unexpexted token")
-# define XE08  X( E_BADFD,      "bad file descriptor")
-# define XE09  X( E_PERMISSION, "permission denied")
+# define XE07  X( E_BADFD,      "bad file descriptor")
+# define XE08  X( E_PERMISSION, "permission denied")
 # define XEUKN X( E_UNKNOWN,    "unknown error")
 # define XEMAX X( E_MAX,        "")
 
-# define EM00 XE00 XE01 XE02 XE03 XE04 XE05 XE06 XE07 XE08 XE09
+# define EM00 XE00 XE01 XE02 XE03 XE04 XE05 XE06 XE07 XE08
 # define EMACRO EM00 XEUKN XEMAX
 
 # define X(e, s) e,

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 11:04:18 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 12:29:08 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,11 @@ t_tree	*factor(t_tree *tree, t_token *token, int *index)
 	node->nchild = 2;
 	node->child[1] = command(NULL, token, index);
 	if (!accept(token, index, sym))
+	{
+		g_errno = E_MISSBRACE;
 		eprintf("error: missing close brace\n");
+		return (node);
+	}
 	return (node);
 }
 
@@ -100,8 +104,9 @@ t_tree	*semicolon(t_tree *tree, t_token *token, int *index)
 		node = tree_new(T_SEMICOL, NULL);
 		if (tree == NULL || tree->type != T_CMD)
 		{
-			g_errno = E_TOKSYNTAX;
+			g_errno = E_SYNTAX;
 			eprintf("syntax error near unexpexted token ';'\n");
+			return (tree);
 		}
 		else
 			node->child[0] = tree;
@@ -121,15 +126,20 @@ t_tree	*pipetree(t_tree *tree, t_token *token, int *index)
 		node = tree_new(T_PIPE, NULL);
 		if (tree == NULL || tree->type != T_CMD)
 		{
-			g_errno = E_TOKSYNTAX;
+			g_errno = E_SYNTAX;
 			eprintf("syntax error near unexpexted token '|'\n");
+			return (tree);
 		}
 		else
 			node->child[0] = tree;
 		tree = node;
 		tree->child[1] = command(tree->child[1], token, index);
-//		if (tree->child[1] && tree->child[1]->type != T_CMD)
-//			eprintf("%#x: ", tree->child[1]->type), eprintf("syntax error near unexpexted token '|'\n");
+		if (tree->child[1] == NULL)
+		{
+			g_errno = E_SYNTAX;
+			eprintf("syntax error near unexpexted token '|'\n");
+			return (tree);
+		}
 		node->nchild = 2;
 	}
 	return (tree);
@@ -187,7 +197,9 @@ t_tree	*parser(t_token *token)
 	tree = command(tree, token, &index);
 	if (g_errno)
 		/* TODO: tout free */
+	{
 		return (NULL);
+	}
 	if (!found(token, &index, S_EOL))
 	{
 		eprintf("syntax error near unexpected token '%s'\n", token[index].s);
