@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:25:49 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 14:40:54 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/22 14:45:28 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ char	*get_redir(t_token *token, char *s)
 	while (*s && ft_isdigit(*s))
 		s++;
 	i = 0;
-	while (token->sym == S_UNKNOWN && i < sizeof(tab) / sizeof(*tab))
+	while (token->sym == S_UNKNOWN && i < (int)(sizeof(tab) / sizeof(*tab)))
 	{
 		if (!ft_strncmp(s, g_symbol[tab[i]].s, g_symbol[tab[i]].len))
 			token->sym = tab[i];
