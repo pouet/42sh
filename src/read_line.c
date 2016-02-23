@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/23 15:49:49 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 16:22:33 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,25 @@ void	movelr(t_line *l, int move)
 	}
 }
 
+void	moveword(t_line *l, int move)
+{
+	puts("coucou");
+	if (move == K_CTRLJ && l->i > 0)
+	{
+		while (l->i > 0 && l->s[l->i] != ' ')
+			movelr(l, K_LEFT);
+		if (l->s[l->i] == ' ')
+			movelr(l, K_RIGHT);
+	}
+	else if (move == K_CTRLK && l->i < l->len)
+	{
+		while (l->i < l->len && l->s[l->i] != ' ')
+			movelr(l, K_RIGHT);
+		if (l->s[l->i] == ' ')
+			movelr(l, K_LEFT);
+	}
+}
+
 void	delchar(t_line *l, int move)
 {
 	ft_tputs("dm");
@@ -130,6 +149,8 @@ char	*read_line(int history)
 		{
 			if (ev.c == K_LEFT || ev.c == K_RIGHT)
 				movelr(l, ev.c);
+			else if (ev.c == K_CTRLJ || ev.c == K_CTRLK)
+				moveword(l, ev.c);
 			else if (ev.c == K_DEL || ev.c == K_BCKSP)
 				delchar(l, ev.c);
 			else if (ev.c == K_CTRLD)

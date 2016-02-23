@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:40:21 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/23 15:50:57 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 16:33:10 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ static void	set_keys(char **keys)
 //	keys[K_ENTER] = "\n";
 	keys[K_BCKSP] = "\177";
 	keys[K_ESCAP] = "\33";
-	keys[K_CTRLD] = "\x04";
+	keys[K_CTRLD] = "\4";
+	keys[K_CTRLJ] = "^J";
+	keys[K_CTRLK] = "^K";
 //	keys[K_HOME] = tgetstr("kh", NULL);
 //	keys[K_END] = tgetstr("kH", NULL);
 }
@@ -41,6 +43,12 @@ int			getevents(t_events *ev)
 	if (ret <= 0)
 		return (ret);
 	buf[ret] = '\0';
+/*	puts("");
+	printf("[");
+	for (i = 0; i < ret; i++)
+		printf("%x", buf[i]);
+	printf("]");
+	puts("");*/
 	if (keys[0] == NULL)
 		set_keys(keys);
 	i = 0;
