@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/16 16:13:34 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/04 08:51:33 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 09:44:34 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ t_colors	g_colors[N_COL] = {
 	{ "{eoc}", 5, TXTRST },
 };
 
-void	col_set(char *txt, char *back)
+void	prtf_col_set(char *txt, char *back)
 {
 	if (txt)
 		ft_putstr_fd(txt, get_fd());
@@ -58,25 +58,25 @@ void	col_set(char *txt, char *back)
 		ft_putstr_fd(back, get_fd());
 }
 
-void	col_reset(void)
+void	prtf_col_reset(void)
 {
 	ft_putstr_fd(TXTRST, get_fd());
 }
 
-void	col_putstr(char *s, char *txt, char *back)
+void	prtf_col_putstr(char *s, char *txt, char *back)
 {
-	col_set(txt, back);
+	prtf_col_set(txt, back);
 	ft_putstr_fd(s, get_fd());
-	col_reset();
+	prtf_col_reset();
 }
 
-void	col_putendl(char *s, char *txt, char *back)
+void	prtf_col_putendl(char *s, char *txt, char *back)
 {
-	col_putstr(s, txt, back);
+	prtf_col_putstr(s, txt, back);
 	ft_putendl("");
 }
 
-int		color_args(const char **fmt)
+int		prtf_color_args(const char **fmt)
 {
 	int		i;
 

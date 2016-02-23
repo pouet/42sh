@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:40:21 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 16:22:14 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 11:53:44 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,11 @@ static void	set_keys(char **keys)
 	keys[K_LEFT] = tgetstr("kl", NULL);
 	keys[K_RIGHT] = tgetstr("kr", NULL);
 	keys[K_DEL] = tgetstr("kD", NULL);
-	keys[K_HOME] = tgetstr("kh", NULL);
-	keys[K_END] = tgetstr("kH", NULL);
-	keys[K_ENTER] = "\n";
+//	keys[K_ENTER] = "\n";
 	keys[K_BCKSP] = "\177";
 	keys[K_ESCAP] = "\33";
-	keys[K_SPACE] = " ";
+//	keys[K_HOME] = tgetstr("kh", NULL);
+//	keys[K_END] = tgetstr("kH", NULL);
 }
 
 int			getevents(t_events *ev)
@@ -46,6 +45,8 @@ int			getevents(t_events *ev)
 	i = 0;
 	while (i < K_NKEYS)
 	{
+		if (keys[i] == NULL)
+			printf("keys[%d]: NULL\n", i);
 		if (ft_strcmp(buf, keys[i]) == 0)
 		{
 			ev->type = T_KEYS;
@@ -56,7 +57,7 @@ int			getevents(t_events *ev)
 	}
 	ev->type = T_ALPHA;
 	ev->c = buf[0];
-	return (ret == 1 && ft_isprint(buf[0]));
+	return (ret == 1/* && ft_isprint(buf[0])*/);
 }
 
 int			keyisarrow(t_events *ev)

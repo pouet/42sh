@@ -6,14 +6,14 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 08:52:51 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/01/27 08:53:18 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 10:07:24 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TTY_H
 # define TTY_H
 
-int		get_tty_fd(void);
+int		set_tty_fd(void);
 void	close_tty_fd(void);
 
 #endif

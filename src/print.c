@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 12:03:43 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 14:58:36 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 10:08:58 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 int		ft_putchar_tty(int c)
 {
-	ft_putchar_fd(c, get_tty_fd());
+	ft_putchar_fd(c, 1);
 	return (1);
 }
 
@@ -48,7 +48,7 @@ void	print_txt(char *s, int hpos, int vpos, unsigned type)
 	if (type & TXT_UDRL)
 		ft_tputs(SUNDERL);
 	mv_cur(hpos, vpos);
-	ft_putstr_fd(s, get_tty_fd());
+	ft_putstr_fd(s, 1);
 	ft_tputs(URVIDEO);
 	ft_tputs(UUNDERL);
 }

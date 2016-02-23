@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/16 16:00:40 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/01/11 09:24:17 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/23 08:41:08 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,10 @@ typedef struct	s_colors
 	const char	*col;
 }				t_colors;
 
-void			col_set(char *txt, char *back);
-void			col_reset(void);
-void			col_putstr(char *s, char *txt, char *back);
-void			col_putendl(char *s, char *txt, char *back);
-int				color_args(const char **fmt);
+void			prtf_col_set(char *txt, char *back);
+void			prtf_col_reset(void);
+void			prtf_col_putstr(char *s, char *txt, char *back);
+void			prtf_col_putendl(char *s, char *txt, char *back);
+int				prtf_color_args(const char **fmt);
 
 #endif

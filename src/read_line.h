@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dll.h                                              :+:      :+:    :+:   */
+/*   read_line.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/25 09:14:46 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/01/25 12:20:01 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/02/23 10:33:59 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/02/23 11:20:25 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DLL_H
-# define DLL_H
+#ifndef READ_LINE_H
+# define READ_LINE_H
 
-# include "libft.h"
-
-# define BUFF_SZ 1024
-
-typedef struct		s_choice
+typedef struct	s_line
 {
-	char			name[BUFF_SZ + 1];
-	int				len;
-	int				select;
-}					t_choice;
+	char		*s;
+	int			i;
+	int			len;
+	int			lenmax;
+//	int			col;
+//	int			lig;
+}				t_line;
 
-int					max_len(t_dllist *l);
-t_node				*dll_next(t_node *cur, int inc);
-t_node				*dll_move(t_dllist *l, t_node *cur, int n, int *index);
+char	*read_line(int history);
 
 #endif
