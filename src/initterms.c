@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:56:04 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/23 15:32:57 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/24 08:59:34 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,6 @@ void	unset_terms(struct termios *term)
 {
 	ft_tputs(UKEYPAD);
 	ft_tputs(CURVI);
-	close_tty_fd();
 	tcsetattr(0, TCSANOW, term);
+	close_tty_fd();
 }

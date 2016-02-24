@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/25 11:52:07 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/23 16:22:56 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/24 10:14:14 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,25 @@ enum
 	K_BCKSP,
 	K_ESCAP,
 	K_CTRLD,
-	K_CTRLJ,
-	K_CTRLK,
+	K_ALTLFT,
+	K_ALTRGT,
+	K_ALTUP,
+	K_ALTDWN,
+	K_ALTJ,
+	K_ALTK,
+	K_ALTX,
+	K_ALTC,
+	K_ALTV,
+	K_HOME,
+	K_END,
 	K_NKEYS
 };
 
 enum
 {
 	T_ALPHA,
-	T_KEYS
+	T_KEYS,
+	T_OTHER
 };
 
 typedef struct	s_events
