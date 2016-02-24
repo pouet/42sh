@@ -1,0 +1,103 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   history.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/02/24 14:25:01 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/02/24 16:12:33 by nchrupal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <unistd.h>
+#include "history.h"
+#include "libft.h"
+#include "xmalloc.h"
+#include "read_line.h"
+
+void	histo_load(t_history *h)
+{
+	/* TODO: charger le fichier */
+	h->dll = dll_newlist();
+	h->new = dll_createnode("", 1);
+	h->cur = h->new;
+}
+
+int		histo_add(t_history *h, t_line *l)
+{
+	if (l->len > 0)
+		dll_pushfront(h->dll, dll_createnode(l->s, l->len + 1));
+	h->cur = h->new;
+	((char*)(h->new->data))[0] = '\0';
+	return (0);
+}
+
+void	clearline(t_line *l)
+{
+	int		i;
+
+	ft_tputs("rc");
+	i = 0;
+	while (i < l->len)
+	{
+		ft_putchar(' ');
+		i++;
+	}
+}
+
+int		histo_up(t_history *h, t_line *l)
+{
+	int		len;
+
+	if (h->cur == h->new && h->dll->sz > 0)
+	{
+		free(h->new->data);
+		h->new->data = ft_strdup(l->s);
+		h->cur = h->dll->first;
+	}
+	else if (h->cur->next != NULL)
+		h->cur = h->cur->next;
+	else
+		return (0);
+	clearline(l);
+	len = ft_strlen(h->cur->data);
+	if (len >= l->lenmax)
+		l = growup_line(l);
+	ft_strcpy(l->s, h->cur->data);
+	l->len = len;
+	l->i = len;
+	ft_tputs("rc");
+	ft_putstr(l->s);
+	ft_tputs("rc");
+	for (int i = 0; i < l->i; i++)
+		ft_tputs("nd");
+//	printf("%s | %s\n", h->cur->data, l->s);
+	return (1);
+}
+
+int		histo_down(t_history *h, t_line *l)
+{
+	int		len;
+
+	if (h->cur == h->dll->first)
+		h->cur = h->new;
+	else if (h->cur->prev != NULL)
+		h->cur = h->cur->prev;
+	else
+		return (0);
+	clearline(l);
+	len = ft_strlen(h->cur->data);
+	if (len >= l->lenmax)
+		l = growup_line(l);
+	ft_strcpy(l->s, h->cur->data);
+	l->len = len;
+	l->i = len;
+	ft_tputs("rc");
+	ft_putstr(l->s);
+	ft_tputs("rc");
+	for (int i = 0; i < l->i; i++)
+		ft_tputs("nd");
+//	printf("%s | %s\n", h->cur->data, l->s);
+	return (1);
+}

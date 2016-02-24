@@ -1,36 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read_line.h                                        :+:      :+:    :+:   */
+/*   dll.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/23 10:33:59 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 15:07:53 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/01/25 09:14:46 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/01/25 12:20:01 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef READ_LINE_H
-# define READ_LINE_H
+#ifndef DLL_H
+# define DLL_H
 
-typedef struct	s_line
+# include "libft.h"
+
+# define BUFF_SZ 1024
+
+typedef struct		s_choice
 {
-	char		*s;
-	int			i;
-	int			len;
-	int			lenmax;
-//	int			col;
-//	int			lig;
-}				t_line;
+	char			name[BUFF_SZ + 1];
+	int				len;
+	int				select;
+}					t_choice;
 
-typedef struct		s_history
-{
-	t_dllist		*dll;
-	t_node			*cur;
-	t_node			*new;
-}					t_history;
-
-char	*read_line(t_history *h);
-t_line	*growup_line(t_line *l);
+int					max_len(t_dllist *l);
+t_node				*dll_next(t_node *cur, int inc);
+t_node				*dll_move(t_dllist *l, t_node *cur, int n, int *index);
 
 #endif

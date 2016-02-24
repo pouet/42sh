@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 12:32:11 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/24 16:24:05 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "events.h"
 #include "xmalloc.h"
 #include "print.h"
+#include "history.h"
 
 t_line	*new_line(void)
 {
@@ -47,22 +48,26 @@ void	print_char(char c)
 	ft_tputs("ei");
 }
 
-char	*add_char(t_line *l, char c)
+t_line	*growup_line(t_line *l)
 {
 	char		*tmp;
+
+	l->lenmax += BUFF_SZ;
+	tmp = xmalloc((l->lenmax + 1) * sizeof(*l->s));
+	ft_bzero(l->s, l->lenmax + 1);
+	ft_strcpy(tmp, l->s);
+	free(l->s);
+	l->s = tmp;
+	return (l);
+}
+
+char	*add_char(t_line *l, char c)
+{
 
 	if (c == '\n')
 		return (l->s);
 	if (l->len + 1 >= l->lenmax)
-	{
-		puts("c'est ca...");
-		l->lenmax += BUFF_SZ;
-		tmp = xmalloc((l->lenmax + 1) * sizeof(*l->s));
-		ft_bzero(l->s, l->lenmax + 1);
-		ft_strcpy(tmp, l->s);
-		free(l->s);
-		l->s = tmp;
-	}
+		l = growup_line(l);
 	ft_memmove(l->s + l->i + 1, l->s + l->i, l->len - l->i);
 //	ft_strcpy(l->s + l->i, l->s + l->i + 1);
 	l->s[l->i] = c;
@@ -130,14 +135,34 @@ void	delchar(t_line *l, int move)
 	ft_tputs("ed");
 }
 
-char	*read_line(int history)
+void	move_homeend(t_line *l, int move)
+{
+	int		i;
+
+	ft_tputs("rc");
+	if (move == K_HOME)
+	{
+		l->i = 0;
+	}
+	else if (move == K_END)
+	{
+		l->i = l->len;
+		i = 0;
+		while (i < l->len)
+		{
+			ft_tputs("nd");
+			i++;
+		}
+	}
+}
+
+char	*read_line(t_history *h)
 {
 	t_line		*l;
 	int			ret;
 	t_events	ev;
 
-	(void)history;
-
+	ft_tputs("sc");
 	l = new_line();
 	while ((ret = getevents(&ev)) > 0/* || (ret == 0 && ev.c == '\n')*/)
 	{
@@ -157,6 +182,12 @@ char	*read_line(int history)
 				moveword(l, ev.c);
 			else if (ev.c == K_DEL || ev.c == K_BCKSP)
 				delchar(l, ev.c);
+			else if (ev.c == K_HOME || ev.c == K_END)
+				move_homeend(l, ev.c);
+			else if (ev.c == K_UP)
+				histo_up(h, l);
+			else if (ev.c == K_DOWN)
+				histo_down(h, l);
 			else if (ev.c == K_CTRLD)
 			{
 				/* free t_line */
@@ -164,5 +195,6 @@ char	*read_line(int history)
 			}
 		}
 	}
+	histo_add(h, l);
 	return (linetos(l));
 }

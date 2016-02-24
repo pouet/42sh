@@ -1,36 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read_line.h                                        :+:      :+:    :+:   */
+/*   history.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/23 10:33:59 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 15:07:53 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/02/24 14:55:07 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/02/24 15:14:15 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef READ_LINE_H
-# define READ_LINE_H
+#ifndef HISTORY_H
+# define HISTORY_H
 
-typedef struct	s_line
-{
-	char		*s;
-	int			i;
-	int			len;
-	int			lenmax;
-//	int			col;
-//	int			lig;
-}				t_line;
+#include "libft.h"
+#include "read_line.h"
 
-typedef struct		s_history
-{
-	t_dllist		*dll;
-	t_node			*cur;
-	t_node			*new;
-}					t_history;
+#define HISTORY_FILE ".42sh_history"
 
-char	*read_line(t_history *h);
-t_line	*growup_line(t_line *l);
+void	histo_load(t_history *h);
+int		histo_add(t_history *h, t_line *l);
+int		histo_up(t_history *h, t_line *l);
+int		histo_down(t_history *h, t_line *l);
 
 #endif

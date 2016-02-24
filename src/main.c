@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/23 10:37:55 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/24 15:07:32 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "redirections.h"
 #include "initterms.h"
 #include "read_line.h"
+#include "history.h"
 
 void	putprompt(void)
 {
@@ -31,17 +32,19 @@ void	putprompt(void)
 void	mainloop(void)
 {
 //	char	s[BUFF_SZ + 1];
-	int		ret;
-	t_token	*token;
-	t_tree	*tree;
-	t_env	*env;
-	char	*s;
+//	int		ret;
+	t_history	h;
+	t_token		*token;
+	t_tree		*tree;
+	t_env		*env;
+	char		*s;
 
 	env = create_env_environ();
+	histo_load(&h);
 	while (42)
 	{
 		putprompt();
-		s = read_line(42);
+		s = read_line(&h);
 		if (s == NULL)
 			break ;
 //		ret = read(0, s, BUFF_SZ);
