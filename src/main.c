@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 15:07:32 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 16:29:13 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,74 @@
 #include "initterms.h"
 #include "read_line.h"
 #include "history.h"
+
+typedef struct	s_fifo
+{
+	char		t[BUFF_SZ + 1];
+	int			i;
+}				t_fifo;
+
+const char *g_corr = "\"\"''``[](){}";
+
+int		fifo_push(t_fifo *fifo, char c)
+{
+	char		*t;
+	int			i;
+
+	t = ft_strchr(g_corr, c);
+	if (t == NULL || *t % 2 == 1)
+		return (0);
+	if (fifo->i + 1 >= BUFF_SZ)
+	{
+		eprintf("error: too many braces\n");
+		return (0);
+	}
+	fifo->t[fifo->i++] = *(t + 1);
+	return (1);
+}
+
+char	fifo_pop(t_fifo *fifo)
+{
+	if (fifo->i - 1 < 0)
+		return ('\0');
+	fifo->i--;
+	return (fifo->t[fifo->i]);
+}
+
+void	getbraces(char *s, t_fifo *fifo)
+{
+	char	*t;
+	int		index;
+	int		i;
+
+	while (*s)
+	{
+		t = ft_strchr(g_corr, *s);
+		if (t != NULL)
+		{
+			index = t - s;
+			if (index % 2 == 0 && (fifo->i == 0 || (fifo->i > 0 &&
+				fifo->t[fifo->i - 1] != '"' && fifo->t[fifo->i - 1] != '\'' &&
+				fifo->t[fifo->i] != '`')))
+				fifo_push(fifo, *(t + 1));
+			else if (index % 2 == 1 && fifo->i > 0
+					&& *s == fifo->t[fifo->i - 1])
+				fifo_pop(fifo);
+		}
+		s++;
+	}
+}
+
+char	*getline(t_history *h)
+{
+	t_fifo	fifo;
+	char	*s;
+	char	*t;
+
+	ft_bzero(&fifo, sizeof(fifo));
+	s = read_line(h);
+	getbraces(s, &fifo);
+}
 
 void	putprompt(void)
 {
@@ -66,14 +134,11 @@ void	mainloop(void)
 
 int		main(int ac, char **av)
 {
-	struct termios	new;
-	struct termios	old;
-
 	(void)ac;
 	(void)av;
 	if (init_term() < 0)
 		return (1);
-	set_terms(&old, &new);
+	set_terms();
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTSTP, SIG_IGN);
@@ -81,6 +146,6 @@ int		main(int ac, char **av)
 	signal(SIGTTOU, SIG_IGN);
 	signal(SIGCHLD, SIG_IGN);
 	mainloop();
-	unset_terms(&old);
+	unset_terms();
 	return (0);
 }

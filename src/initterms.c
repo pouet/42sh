@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:56:04 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 08:59:34 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 15:05:12 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include "print.h"
 #include "xmalloc.h"
 #include "tty.h"
+
+struct termios g_old;
 
 /*
 ** Just for norminette...
@@ -62,24 +64,25 @@ void	set_extern_var(void)
 	ospeed = 9600;
 }
 
-void	set_terms(struct termios *old, struct termios *new)
+void	set_terms(void)
 {
-	tcgetattr(0, old);
-	*new = *old;
-	new->c_lflag &= ~(ICANON | ECHO);
-	new->c_cc[VTIME] = 0;
-	new->c_cc[VMIN] = 1;
-	tcsetattr(0, TCSANOW, new);
+	struct termios new;
+
+	tcgetattr(0, &g_old);
+	new = g_old;
+	new.c_lflag &= ~(ICANON | ECHO);
+	new.c_cc[VTIME] = 0;
+	new.c_cc[VMIN] = 1;
+	tcsetattr(0, TCSANOW, &new);
 	set_tty_fd();
 	ft_tputs(SKEYPAD);
 	ft_tputs(CURVI);
-//	ft_tputs(CURINVI);
 }
 
-void	unset_terms(struct termios *term)
+void	unset_terms(void)
 {
 	ft_tputs(UKEYPAD);
 	ft_tputs(CURVI);
-	tcsetattr(0, TCSANOW, term);
+	tcsetattr(0, TCSANOW, &g_old);
 	close_tty_fd();
 }

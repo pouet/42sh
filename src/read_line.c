@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 11:45:41 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 15:56:58 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ char	*read_line(t_history *h)
 			add_char(l, ev.c);
 			print_char(ev.c);
 			if (ev.c == '\n')
-				break ;
+					break ;
 		}
 		else
 		{

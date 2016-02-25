@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:33:59 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 15:07:53 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 15:53:26 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 
 typedef struct	s_line
 {
-	char		*s;
-	int			i;
-	int			len;
-	int			lenmax;
-//	int			col;
-//	int			lig;
+	char			*s;
+	int				i;
+	int				len;
+	int				lenmax;
+//	int				col;
+//	int				lig;
 }				t_line;
 
 typedef struct		s_history

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 09:01:03 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 15:04:42 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "libft.h"
 #include "ft_printf.h"
 #include "process_cmd.h"
+#include "initterms.h"
 #include "lexer.h"
 #include "parser.h"
 #include "ft_env.h"
