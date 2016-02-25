@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 16:29:13 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 16:37:17 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,9 @@ const char *g_corr = "\"\"''``[](){}";
 int		fifo_push(t_fifo *fifo, char c)
 {
 	char		*t;
-	int			i;
 
 	t = ft_strchr(g_corr, c);
-	if (t == NULL || *t % 2 == 1)
+	if (t == NULL)
 		return (0);
 	if (fifo->i + 1 >= BUFF_SZ)
 	{
@@ -61,18 +60,18 @@ void	getbraces(char *s, t_fifo *fifo)
 {
 	char	*t;
 	int		index;
-	int		i;
 
-	while (*s)
+	while (s && *s)
 	{
 		t = ft_strchr(g_corr, *s);
 		if (t != NULL)
 		{
-			index = t - s;
+			index = t - g_corr;
+			printf("%d", index);
 			if (index % 2 == 0 && (fifo->i == 0 || (fifo->i > 0 &&
 				fifo->t[fifo->i - 1] != '"' && fifo->t[fifo->i - 1] != '\'' &&
 				fifo->t[fifo->i] != '`')))
-				fifo_push(fifo, *(t + 1));
+				fifo_push(fifo, g_corr[index]);
 			else if (index % 2 == 1 && fifo->i > 0
 					&& *s == fifo->t[fifo->i - 1])
 				fifo_pop(fifo);
@@ -90,6 +89,11 @@ char	*getline(t_history *h)
 	ft_bzero(&fifo, sizeof(fifo));
 	s = read_line(h);
 	getbraces(s, &fifo);
+	puts("");
+	for (int i = 0; i < fifo.i; i++)
+		printf("[%c]", fifo.t[i]);
+	puts("");
+	return (s);
 }
 
 void	putprompt(void)
@@ -112,7 +116,8 @@ void	mainloop(void)
 	while (42)
 	{
 		putprompt();
-		s = read_line(&h);
+//		s = read_line(&h);
+		s = getline(&h);
 		if (s == NULL)
 			break ;
 //		ret = read(0, s, BUFF_SZ);
