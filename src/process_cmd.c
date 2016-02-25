@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 12:19:41 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 09:01:03 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ int		launch_process(t_tree *tree, t_env *env)
 	environ = env_totab(env);
 	restore_sigdfl();
 	execve(av[0], av, environ);
-	eprintf("error: cannot create processus\n");
+	eprintf("error: cannot launch '%s'\n", av[0]);
 	exit(1);
 }
 

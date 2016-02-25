@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:25:01 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 16:12:33 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 11:45:29 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "libft.h"
 #include "xmalloc.h"
 #include "read_line.h"
+#include "print.h"
 
 void	histo_load(t_history *h)
 {
@@ -33,17 +34,10 @@ int		histo_add(t_history *h, t_line *l)
 	return (0);
 }
 
-void	clearline(t_line *l)
+void	clearline(void)
 {
-	int		i;
-
 	ft_tputs("rc");
-	i = 0;
-	while (i < l->len)
-	{
-		ft_putchar(' ');
-		i++;
-	}
+	ft_tputs("ce");
 }
 
 int		histo_up(t_history *h, t_line *l)
@@ -60,7 +54,7 @@ int		histo_up(t_history *h, t_line *l)
 		h->cur = h->cur->next;
 	else
 		return (0);
-	clearline(l);
+	clearline();
 	len = ft_strlen(h->cur->data);
 	if (len >= l->lenmax)
 		l = growup_line(l);
@@ -86,7 +80,7 @@ int		histo_down(t_history *h, t_line *l)
 		h->cur = h->cur->prev;
 	else
 		return (0);
-	clearline(l);
+	clearline();
 	len = ft_strlen(h->cur->data);
 	if (len >= l->lenmax)
 		l = growup_line(l);

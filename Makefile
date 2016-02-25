@@ -6,14 +6,14 @@
 #    By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/01 10:58:46 by nchrupal          #+#    #+#              #
-#    Updated: 2016/02/24 14:54:46 by nchrupal         ###   ########.fr        #
+#    Updated: 2016/02/25 10:46:27 by nchrupal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC_NAME = $(sort main.c lexer.c parser.c ft_env.c expand.c error.c\
 		   process_cmd.c get_opts.c ft_setenv.c ft_cd.c ft_exit.c\
 		   redirections.c events.c xmalloc.c colors.c initterms.c tty.c\
-		   print.c read_line.c history.c)
+		   print.c read_line.c history.c clipboard.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 LIBFT_PATH = ./libft/

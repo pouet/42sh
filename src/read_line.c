@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 16:24:05 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 11:45:41 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "xmalloc.h"
 #include "print.h"
 #include "history.h"
+#include "clipboard.h"
 
 t_line	*new_line(void)
 {
@@ -93,7 +94,7 @@ void	movelr(t_line *l, int move)
 
 void	moveword(t_line *l, int move)
 {
-	if ((move == K_ALTJ || move == K_ALTLFT) && l->i > 0)
+	if (move == K_ALTLFT && l->i > 0)
 	{
 		while (l->i > 0 && l->s[l->i - 1] == ' ')
 			movelr(l, K_LEFT);
@@ -102,7 +103,7 @@ void	moveword(t_line *l, int move)
 		if (l->s[l->i] == ' ')
 			movelr(l, K_RIGHT);
 	}
-	else if ((move == K_ALTK || move == K_ALTRGT) && l->i < l->len)
+	else if (move == K_ALTRGT && l->i < l->len)
 	{
 		while (l->i < l->len && l->s[l->i] != ' ')
 			movelr(l, K_RIGHT);
@@ -156,6 +157,33 @@ void	move_homeend(t_line *l, int move)
 	}
 }
 
+void	clipboard_key(t_line *l, int move)
+{
+	int		i;
+
+	if (move == K_ALTA)
+		clip_cut(C_CUTBEG, l);
+	else if (move == K_ALTS)
+		clip_cut(C_CUTEND, l);
+	else if (move == K_ALTD)
+		clip_cut(C_CUTALL, l);
+	else if (move == K_ALTZ)
+		clip_copy(C_CPYBEG, l);
+	else if (move == K_ALTX)
+		clip_copy(C_CPYEND, l);
+	else if (move == K_ALTC)
+		clip_copy(C_CPYALL, l);
+	else if (move == K_ALTV)
+		clip_paste(l);
+	ft_tputs("rc");
+	ft_tputs("ce");
+	ft_putstr(l->s);
+	ft_tputs("rc");
+	i = 0;
+	while (i++ < l->i)
+		ft_tputs("nd");
+}
+
 char	*read_line(t_history *h)
 {
 	t_line		*l;
@@ -177,8 +205,7 @@ char	*read_line(t_history *h)
 		{
 			if (ev.c == K_LEFT || ev.c == K_RIGHT)
 				movelr(l, ev.c);
-			else if (ev.c == K_ALTJ || ev.c == K_ALTK ||
-					ev.c == K_ALTLFT || ev.c == K_ALTRGT)
+			else if (ev.c == K_ALTLFT || ev.c == K_ALTRGT)
 				moveword(l, ev.c);
 			else if (ev.c == K_DEL || ev.c == K_BCKSP)
 				delchar(l, ev.c);
@@ -188,6 +215,10 @@ char	*read_line(t_history *h)
 				histo_up(h, l);
 			else if (ev.c == K_DOWN)
 				histo_down(h, l);
+			else if (ev.c == K_ALTA || ev.c == K_ALTS || ev.c == K_ALTD ||
+					ev.c == K_ALTZ || ev.c == K_ALTX || ev.c == K_ALTC ||
+					ev.c == K_ALTV)
+				clipboard_key(l, ev.c);
 			else if (ev.c == K_CTRLD)
 			{
 				/* free t_line */

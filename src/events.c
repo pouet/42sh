@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:40:21 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 12:32:08 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 11:08:04 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,15 @@ static void	set_keys(char **keys)
 	keys[K_BCKSP] = "\x7f";
 	keys[K_ESCAP] = "\x1b";
 	keys[K_CTRLD] = "\x04";
-	keys[K_ALTJ] = "\xe2\x88\x86";
-	keys[K_ALTK] = "\xcb\x9a";
 	/* TODO: modifier ALT+J/K en ALT+H/L */
 	keys[K_ALTUP] = "\x1b\x1b\x5b\x41";
 	keys[K_ALTDWN] = "\x1b\x1b\x5b\x42";
 	keys[K_ALTRGT] = "\x1b\x1b\x5b\x43";
 	keys[K_ALTLFT] = "\x1b\x1b\x5b\x44";
+	keys[K_ALTA] = "\xc3\xa5";
+	keys[K_ALTS] = "\xc3\x9f";
+	keys[K_ALTD] = "\xe2\x88\x82";
+	keys[K_ALTZ] = "\xce\xa9";
 	keys[K_ALTX] = "\xe2\x89\x88";
 	keys[K_ALTC] = "\xc3\xa7";
 	keys[K_ALTV] = "\xe2\x88\x9a";

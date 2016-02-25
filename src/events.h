@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/25 11:52:07 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/24 10:14:14 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 11:03:23 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@ enum
 	K_ALTRGT,
 	K_ALTUP,
 	K_ALTDWN,
-	K_ALTJ,
-	K_ALTK,
+	K_ALTA,
+	K_ALTS,
+	K_ALTD,
+	K_ALTZ,
 	K_ALTX,
 	K_ALTC,
 	K_ALTV,

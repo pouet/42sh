@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 15:15:52 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/11 10:10:25 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/25 08:57:28 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	expand_brace(t_tree *tree, t_env *env)
 }
 
 /*
-** if HOME is unset: getpwuid() => pwd_dir
+** TODO: if HOME is unset: getpwuid() => pwd_dir
 */
 
 void	expand_tilde(t_tree *tree, t_env *env)
