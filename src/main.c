@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 10:53:09 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 15:56:35 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,17 @@
 #include <time.h>
 #include "colors.h"
 
-void	putprompt(void)
-{
-	ft_putstr("$> ");
-}
-
 void	getprompt(char *s, unsigned len)
 {
-	time_t	t;
-	char	*clock;
+//	time_t	t;
+//	char	*clock;
 	char	pwd[BUFF_SZ + 1];
 
 	s[0] = '\0';
-	t = time(NULL);
+/*	t = time(NULL);
 	clock = ctime(&t);
 	ft_strlcat(s, TXTPUR, len);
-	ft_strlcat(s, clock, len);
+	ft_strlcat(s, clock, len);*/
 	getcwd(pwd, BUFF_SZ);
 	ft_strlcat(s, TXTGRN, len);
 	ft_strlcat(s, pwd, len);

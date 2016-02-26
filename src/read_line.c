@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 12:16:08 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 16:42:41 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,72 @@ void	print_char(char c)
 	ft_tputs("ei");
 }
 
+void	movelr(t_line *l, int move)
+{
+	if (move == K_LEFT && l->i > 0)
+	{
+		l->i--;
+		ft_tputs("le");
+	}
+	else if (move == K_RIGHT && l->i < l->len)
+	{
+		l->i++;
+		if ((l->i + l->lenprompt) % l->col == 0 || l->s[l->i] == '\n')
+		{
+			ft_tputs("do");
+			ft_tputs("cr");
+		}
+		else
+			ft_tputs("nd");
+	}
+}
+
+void	print_line(t_line *l, char *prompt)
+{
+	int		i;
+
+	ft_tputs("cr");
+	i = 0;
+	while (i < (l->i + l->lenprompt + 1) / (l->col + 1))
+	{
+		ft_tputs("up");
+		i++;
+	}
+//	ft_tputs("rc");
+//	ft_tputs("ce");
+
+//	ft_tputs("nw");
+	ft_tputs("cd");
+	ft_putstr(prompt);
+
+//	ft_tputs("rc");
+	ft_putstr(l->s);
+
+//	ft_tputs("rc");
+	ft_tputs("cr");
+	i = 0;
+	while (i < (l->len + l->lenprompt + 0) / (l->col + 1))
+	{
+		ft_tputs("up");
+		i++;
+	}
+	i = 0;
+	while (i < l->lenprompt)
+	{
+		ft_tputs("nd");
+		i++;
+	}
+	i = l->i;
+	l->i = 0;
+	while (i > 0)
+	{
+		movelr(l, K_RIGHT);
+		if (l->i != 0 && l->i % l->col == 0)
+			ft_tputs("sf");
+		i--;
+	}
+}
+
 t_line	*growup_line(t_line *l)
 {
 	char		*tmp;
@@ -71,7 +137,6 @@ char	*add_char(t_line *l, char c)
 	if (l->len + 1 >= l->lenmax)
 		l = growup_line(l);
 	ft_memmove(l->s + l->i + 1, l->s + l->i, l->len - l->i);
-//	ft_strcpy(l->s + l->i, l->s + l->i + 1);
 	l->s[l->i] = c;
 	l->i++;
 	l->len++;
@@ -79,24 +144,29 @@ char	*add_char(t_line *l, char c)
 	return (l->s);
 }
 
-void	movelr(t_line *l, int move)
+void	moveupdown(t_line *l, int move)
 {
-	if (move == K_LEFT && l->i > 0)
+	int		i;
+
+	if (move == K_ALTUP)
 	{
-		if ((l->i + l->lenprompt) % l->col == 0)
-			ft_tputs("bw");
-		else
-			ft_tputs("le");
-		l->i--;
+		i = 0;
+		while (l->i > 0 && i < l->col && l->s[l->i] != '\n')
+		{
+			movelr(l, K_LEFT);
+			i++;
+		}
 	}
-	else if (move == K_RIGHT && l->i < l->len)
+	else if (move == K_ALTDWN)
 	{
-//		printf("%d %d %d\n", l->i + l->lenprompt, (l->i + l->lenprompt) % l->col, l->col);
-		if ((l->i + l->lenprompt) % l->col == l->col - 1)
-			ft_tputs("nw");
-		else
-			ft_tputs("nd");
-		l->i++;
+		i = 0;
+		while (l->i < l->len && i < l->col && l->s[l->i] != '\n')
+		{
+			movelr(l, K_RIGHT);
+			i++;
+		}
+		if (l->s[l->i] == '\n')
+			movelr(l, K_RIGHT);
 	}
 }
 
@@ -108,7 +178,7 @@ void	moveword(t_line *l, int move)
 			movelr(l, K_LEFT);
 		while (l->i > 0 && l->s[l->i - 1] != ' ')
 			movelr(l, K_LEFT);
-		if (l->s[l->i] == ' ')
+		if (l->s[l->i] == ' ' && l->i != 0)
 			movelr(l, K_RIGHT);
 	}
 	else if (move == K_ALTRGT && l->i < l->len)
@@ -117,7 +187,7 @@ void	moveword(t_line *l, int move)
 			movelr(l, K_RIGHT);
 		while (l->i < l->len && l->s[l->i] == ' ')
 			movelr(l, K_RIGHT);
-		if (l->s[l->i] == ' ')
+		if (l->s[l->i] == ' ' && l->i != l->len)
 			movelr(l, K_LEFT);
 	}
 }
@@ -183,58 +253,79 @@ void	clipboard_key(t_line *l, int move)
 		clip_copy(C_CPYALL, l);
 	else if (move == K_ALTV)
 		clip_paste(l);
-	ft_tputs("rc");
+/*	ft_tputs("rc");
 	ft_tputs("ce");
 	ft_putstr(l->s);
 	ft_tputs("rc");
 	i = 0;
 	while (i++ < l->i)
-		ft_tputs("nd");
+		ft_tputs("nd");*/
 }
 
 int		lenprompt(char *prompt)
 {
 	int		len;
 	int		i;
+	char	*s;
+	char	*t;
 
 	len = ft_strlen(prompt);
 	i = len - 1;
-	len = 0;
-	while (i >= 0 && prompt[i] != '\n')
-	{
-		if (ft_isprint(prompt[i]))
-			len++;
+	while (i > 0 && prompt[i] != '\n')
 		i--;
+	prompt += i;
+	if (*prompt == '\n')
+		prompt++;
+	i = 0;
+	len = ft_strlen(prompt);
+	while (prompt[i])
+	{
+		if ((s = ft_strchr(prompt + i, '\e')) != NULL &&
+			(t = ft_strchr(s + 1, 'm')) != NULL)
+		{
+			prompt = t + 1;
+			len -= t - s + 1;
+		}
+		i++;
 	}
-	printf("%d [%c]\n", len, prompt[len]);
 	return (len);
 }
 
 char	*read_line(char *prompt, t_history *h)
 {
-	t_line		*l;
-	int			ret;
-	t_events	ev;
+	t_line			*l;
+	int				ret;
+	t_events		ev;
+//	struct winsize	ws;
 
-	ft_putstr(prompt);
 	ft_tputs("sc");
+	ft_putstr(prompt);
 	l = new_line();
 	l->lenprompt = lenprompt(prompt);
 	while ((ret = getevents(&ev)) > 0/* || (ret == 0 && ev.c == '\n')*/)
 	{
+//		ioctl(0, TIOCGWINSZ, &ws);
+//		l->col = ws.ws_col;
+//		l->lig = ws.ws_row;
 		l->col = tgetnum("co");
 		l->lig = tgetnum("li");
 		if (ev.type == T_ALPHA)
 		{
 			add_char(l, ev.c);
-			print_char(ev.c);
+			print_line(l, prompt);
+//			print_char(ev.c);
 			if (ev.c == '\n')
+			{
+				ft_putendl("");
 					break ;
+			}
 		}
 		else
 		{
 			if (ev.c == K_LEFT || ev.c == K_RIGHT)
 				movelr(l, ev.c);
+			else if (ev.c == K_ALTUP || ev.c == K_ALTDWN)
+				moveupdown(l, ev.c);
 			else if (ev.c == K_ALTLFT || ev.c == K_ALTRGT)
 				moveword(l, ev.c);
 			else if (ev.c == K_DEL || ev.c == K_BCKSP)
@@ -254,6 +345,7 @@ char	*read_line(char *prompt, t_history *h)
 				/* free t_line */
 				return (NULL);
 			}
+			print_line(l, prompt);
 		}
 	}
 	return (linetos(l));
