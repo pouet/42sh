@@ -6,12 +6,13 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 15:56:58 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 12:16:08 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <term.h>
 #include "libft.h"
 #include "read_line.h"
 #include "lexer.h"
@@ -82,13 +83,20 @@ void	movelr(t_line *l, int move)
 {
 	if (move == K_LEFT && l->i > 0)
 	{
+		if ((l->i + l->lenprompt) % l->col == 0)
+			ft_tputs("bw");
+		else
+			ft_tputs("le");
 		l->i--;
-		ft_tputs("le");
 	}
 	else if (move == K_RIGHT && l->i < l->len)
 	{
+//		printf("%d %d %d\n", l->i + l->lenprompt, (l->i + l->lenprompt) % l->col, l->col);
+		if ((l->i + l->lenprompt) % l->col == l->col - 1)
+			ft_tputs("nw");
+		else
+			ft_tputs("nd");
 		l->i++;
-		ft_tputs("nd");
 	}
 }
 
@@ -184,16 +192,38 @@ void	clipboard_key(t_line *l, int move)
 		ft_tputs("nd");
 }
 
-char	*read_line(t_history *h)
+int		lenprompt(char *prompt)
+{
+	int		len;
+	int		i;
+
+	len = ft_strlen(prompt);
+	i = len - 1;
+	len = 0;
+	while (i >= 0 && prompt[i] != '\n')
+	{
+		if (ft_isprint(prompt[i]))
+			len++;
+		i--;
+	}
+	printf("%d [%c]\n", len, prompt[len]);
+	return (len);
+}
+
+char	*read_line(char *prompt, t_history *h)
 {
 	t_line		*l;
 	int			ret;
 	t_events	ev;
 
+	ft_putstr(prompt);
 	ft_tputs("sc");
 	l = new_line();
+	l->lenprompt = lenprompt(prompt);
 	while ((ret = getevents(&ev)) > 0/* || (ret == 0 && ev.c == '\n')*/)
 	{
+		l->col = tgetnum("co");
+		l->lig = tgetnum("li");
 		if (ev.type == T_ALPHA)
 		{
 			add_char(l, ev.c);
@@ -211,9 +241,9 @@ char	*read_line(t_history *h)
 				delchar(l, ev.c);
 			else if (ev.c == K_HOME || ev.c == K_END)
 				move_homeend(l, ev.c);
-			else if (ev.c == K_UP)
+			else if (h && ev.c == K_UP)
 				histo_up(h, l);
-			else if (ev.c == K_DOWN)
+			else if (h && ev.c == K_DOWN)
 				histo_down(h, l);
 			else if (ev.c == K_ALTA || ev.c == K_ALTS || ev.c == K_ALTD ||
 					ev.c == K_ALTZ || ev.c == K_ALTX || ev.c == K_ALTC ||
@@ -226,6 +256,5 @@ char	*read_line(t_history *h)
 			}
 		}
 	}
-	histo_add(h, l);
 	return (linetos(l));
 }

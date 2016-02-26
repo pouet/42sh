@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:25:01 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 11:45:29 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 08:42:49 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,13 @@ void	histo_load(t_history *h)
 	h->cur = h->new;
 }
 
-int		histo_add(t_history *h, t_line *l)
+int		histo_add(t_history *h, char *s)
 {
-	if (l->len > 0)
-		dll_pushfront(h->dll, dll_createnode(l->s, l->len + 1));
+	int		len;
+
+	len = ft_strlen(s);
+	if (len > 0)
+		dll_pushfront(h->dll, dll_createnode(s, len + 1));
 	h->cur = h->new;
 	((char*)(h->new->data))[0] = '\0';
 	return (0);

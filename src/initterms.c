@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:56:04 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 15:05:12 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 11:21:27 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ void	set_terms(void)
 void	unset_terms(void)
 {
 	ft_tputs(UKEYPAD);
-	ft_tputs(CURVI);
 	tcsetattr(0, TCSANOW, &g_old);
 	close_tty_fd();
 }

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:33:59 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 15:53:26 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 11:51:40 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ typedef struct	s_line
 	int				i;
 	int				len;
 	int				lenmax;
-//	int				col;
-//	int				lig;
+	int				lenprompt;
+	int				col;
+	int				lig;
 }				t_line;
 
 typedef struct		s_history
@@ -30,7 +31,7 @@ typedef struct		s_history
 	t_node			*new;
 }					t_history;
 
-char	*read_line(t_history *h);
+char	*read_line(char *prompt, t_history *h);
 t_line	*growup_line(t_line *l);
 
 #endif

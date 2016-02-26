@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 11:43:42 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/11 09:19:03 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 11:05:03 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,6 @@ void	print_env(t_env *env)
 	env = env->next;
 	while (env)
 	{
-		ft_putstr("-> ");
 		ft_putendl(env->content);
 		env = env->next;
 	}
@@ -175,7 +174,7 @@ t_flags	get_envflags(t_tree *tree, int *i)
 	while (*i < tree->nchild)
 	{
 		j = get_identifier(tree, *i, s);
-		if (j >= tree->nchild || *s != '-')
+		if (*s != '-')
 			break ;
 		t = get_opts(s, g_env_opts, g_env_valopts, &flags);
 		if (t == s)

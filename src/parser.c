@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 14:31:25 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 08:34:26 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,9 +189,9 @@ t_tree	*identifiers(t_tree *tree, t_token *token, int *index)
 
 t_tree	*command(t_tree *tree, t_token *token, int *index)
 {
-	while (found(token, index, S_LHOOK) || found(token, index, S_LBRACE)
+/*	while (found(token, index, S_LHOOK) || found(token, index, S_LBRACE)
 			|| found(token, index, S_LPAR))
-		tree = factor(tree, token, index);
+		tree = factor(tree, token, index);*/
 	while (accept(token, index, S_SEPARATOR))
 		;
 	tree = identifiers(tree, token, index);

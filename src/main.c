@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 16:37:17 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/02/26 10:53:09 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,32 @@
 #include "initterms.h"
 #include "read_line.h"
 #include "history.h"
+#include "xmalloc.h"
+#include <time.h>
+#include "colors.h"
+
+void	putprompt(void)
+{
+	ft_putstr("$> ");
+}
+
+void	getprompt(char *s, unsigned len)
+{
+	time_t	t;
+	char	*clock;
+	char	pwd[BUFF_SZ + 1];
+
+	s[0] = '\0';
+	t = time(NULL);
+	clock = ctime(&t);
+	ft_strlcat(s, TXTPUR, len);
+	ft_strlcat(s, clock, len);
+	getcwd(pwd, BUFF_SZ);
+	ft_strlcat(s, TXTGRN, len);
+	ft_strlcat(s, pwd, len);
+	ft_strlcat(s, TXTRST, len);
+	ft_strlcat(s, " -> ", len);
+}
 
 typedef struct	s_fifo
 {
@@ -67,7 +93,9 @@ void	getbraces(char *s, t_fifo *fifo)
 		if (t != NULL)
 		{
 			index = t - g_corr;
-			printf("%d", index);
+			if (fifo->i > 0 && index < 6 && *s == fifo->t[fifo->i - 1])
+				index++;
+//			printf("%d", index);
 			if (index % 2 == 0 && (fifo->i == 0 || (fifo->i > 0 &&
 				fifo->t[fifo->i - 1] != '"' && fifo->t[fifo->i - 1] != '\'' &&
 				fifo->t[fifo->i] != '`')))
@@ -82,23 +110,45 @@ void	getbraces(char *s, t_fifo *fifo)
 
 char	*getline(t_history *h)
 {
+	char	prompt[BUFF_SZ + 1];
 	t_fifo	fifo;
 	char	*s;
 	char	*t;
+	char	*tmp;
 
+	s = NULL;
 	ft_bzero(&fifo, sizeof(fifo));
-	s = read_line(h);
-	getbraces(s, &fifo);
-	puts("");
-	for (int i = 0; i < fifo.i; i++)
-		printf("[%c]", fifo.t[i]);
-	puts("");
+	getprompt(prompt, BUFF_SZ);
+	while (s == NULL || (s != NULL && fifo.i != 0))
+	{
+		t = read_line(prompt, h);
+		if (t == NULL)
+		{
+			free(s);
+			return (NULL);
+		}
+		getbraces(t, &fifo);
+		if (s == NULL)
+		{
+			s = t;
+			histo_add(h, s);
+			ft_strcpy(prompt, " > ");
+		}
+		else
+		{
+			tmp = xmalloc((ft_strlen(s) + ft_strlen(t) + 2) * sizeof(*tmp));
+			ft_strcpy(tmp, s);
+			ft_strcat(tmp, "\n");
+			ft_strcat(tmp, t);
+			free(s);
+			free(t);
+			s = tmp;
+			free(h->dll->first->data);
+			h->dll->first->data = ft_strdup(s);
+		}
+//		printf("[%s][%d]\n", s, fifo.i);
+	}
 	return (s);
-}
-
-void	putprompt(void)
-{
-	ft_putstr("$> ");
 }
 
 void	mainloop(void)
@@ -115,11 +165,11 @@ void	mainloop(void)
 	histo_load(&h);
 	while (42)
 	{
-		putprompt();
 //		s = read_line(&h);
 		s = getline(&h);
 		if (s == NULL)
 			break ;
+//		printf("[%s]\n", s);
 //		ret = read(0, s, BUFF_SZ);
 //		if (ret <= 0)
 //			break ;
