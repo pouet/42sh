@@ -29,15 +29,15 @@
 
 void	getprompt(char *s, unsigned len)
 {
-//	time_t	t;
-//	char	*clock;
+	time_t	t;
+	char	*clock;
 	char	pwd[BUFF_SZ + 1];
 
 	s[0] = '\0';
-/*	t = time(NULL);
+	t = time(NULL);
 	clock = ctime(&t);
 	ft_strlcat(s, TXTPUR, len);
-	ft_strlcat(s, clock, len);*/
+	ft_strlcat(s, clock, len);
 	getcwd(pwd, BUFF_SZ);
 	ft_strlcat(s, TXTGRN, len);
 	ft_strlcat(s, pwd, len);

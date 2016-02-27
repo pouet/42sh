@@ -37,12 +37,6 @@ int		histo_add(t_history *h, char *s)
 	return (0);
 }
 
-void	clearline(void)
-{
-	ft_tputs("rc");
-	ft_tputs("ce");
-}
-
 int		histo_up(t_history *h, t_line *l)
 {
 	int		len;
@@ -57,19 +51,12 @@ int		histo_up(t_history *h, t_line *l)
 		h->cur = h->cur->next;
 	else
 		return (0);
-	clearline();
 	len = ft_strlen(h->cur->data);
 	if (len >= l->lenmax)
 		l = growup_line(l);
 	ft_strcpy(l->s, h->cur->data);
 	l->len = len;
 	l->i = len;
-	ft_tputs("rc");
-	ft_putstr(l->s);
-	ft_tputs("rc");
-	for (int i = 0; i < l->i; i++)
-		ft_tputs("nd");
-//	printf("%s | %s\n", h->cur->data, l->s);
 	return (1);
 }
 
@@ -83,18 +70,11 @@ int		histo_down(t_history *h, t_line *l)
 		h->cur = h->cur->prev;
 	else
 		return (0);
-	clearline();
 	len = ft_strlen(h->cur->data);
 	if (len >= l->lenmax)
 		l = growup_line(l);
 	ft_strcpy(l->s, h->cur->data);
 	l->len = len;
 	l->i = len;
-	ft_tputs("rc");
-	ft_putstr(l->s);
-	ft_tputs("rc");
-	for (int i = 0; i < l->i; i++)
-		ft_tputs("nd");
-//	printf("%s | %s\n", h->cur->data, l->s);
 	return (1);
 }

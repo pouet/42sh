@@ -47,7 +47,7 @@ ft_printf:
 
 $(NAME): $(OBJ)
 	@printf "%-50s" "create executable "$(notdir $@)...
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $(NAME) -fsanitize=address -g3 -gdwarf-2 -O0
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $(NAME) -g3 -gdwarf-2 -O0
 	@printf "\e[1;32m[OK]\e[0m\n"
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c

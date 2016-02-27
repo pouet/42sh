@@ -70,50 +70,46 @@ void	movelr(t_line *l, int move)
 	}
 }
 
-void	print_line(t_line *l, char *prompt)
+void	clrscr_down(t_line *l)
 {
 	int		i;
 
-	ft_tputs("cr");
-	i = 0;
-	while (i < (l->i + l->lenprompt + 1) / (l->col + 1))
-	{
-		ft_tputs("up");
-		i++;
-	}
-//	ft_tputs("rc");
-//	ft_tputs("ce");
-
-//	ft_tputs("nw");
-	ft_tputs("cd");
-	ft_putstr(prompt);
-
-//	ft_tputs("rc");
-	ft_putstr(l->s);
-
-//	ft_tputs("rc");
-	ft_tputs("cr");
-	i = 0;
-	while (i < (l->len + l->lenprompt + 0) / (l->col + 1))
-	{
-		ft_tputs("up");
-		i++;
-	}
-	i = 0;
-	while (i < l->lenprompt)
-	{
-		ft_tputs("nd");
-		i++;
-	}
 	i = l->i;
-	l->i = 0;
-	while (i > 0)
-	{
-		movelr(l, K_RIGHT);
-		if (l->i != 0 && l->i % l->col == 0)
-			ft_tputs("sf");
-		i--;
-	}
+	while (l->i != 0)
+		movelr(l, K_LEFT);
+	l->i = i;
+	ft_tputs("cr");
+	ft_tputs("cd");
+}
+
+void	movecur_backtoi(t_line *l)
+{
+	int		i;
+
+	i = l->i;
+	l->i = l->len;
+	while (l->i > i)
+		movelr(l, K_LEFT);
+}
+
+void	putprompt_lastline(char *prompt)
+{
+	int		len;
+
+	len = ft_strlen(prompt);
+	while (len > 0 && prompt[len] != '\n')
+		len--;
+	if (prompt[len] == '\n')
+		len++;
+	ft_putstr(prompt + len);
+}
+
+void	print_line(t_line *l, char *prompt)
+{
+	clrscr_down(l);
+	putprompt_lastline(prompt);
+	ft_putstr(l->s);
+	movecur_backtoi(l);
 }
 
 t_line	*growup_line(t_line *l)
@@ -291,6 +287,26 @@ int		lenprompt(char *prompt)
 	return (len);
 }
 
+void	histo_key(t_history *h, t_line *l, int move)
+{
+	int		i;
+	int		ret;
+
+	if (h == NULL)
+		return ;
+	clrscr_down(l);
+	i = l->i;
+	l->i = 0;
+	movecur_backtoi(l);
+	ret = 1;
+	if (move == K_UP)
+		ret = histo_up(h, l);
+	else if (move == K_DOWN)
+		ret = histo_down(h, l);
+	if (ret == 0)
+		l->i = i;
+}
+
 char	*read_line(char *prompt, t_history *h)
 {
 	t_line			*l;
@@ -332,10 +348,8 @@ char	*read_line(char *prompt, t_history *h)
 				delchar(l, ev.c);
 			else if (ev.c == K_HOME || ev.c == K_END)
 				move_homeend(l, ev.c);
-			else if (h && ev.c == K_UP)
-				histo_up(h, l);
-			else if (h && ev.c == K_DOWN)
-				histo_down(h, l);
+			else if (ev.c == K_UP || ev.c == K_DOWN)
+				histo_key(h, l, ev.c);
 			else if (ev.c == K_ALTA || ev.c == K_ALTS || ev.c == K_ALTD ||
 					ev.c == K_ALTZ || ev.c == K_ALTX || ev.c == K_ALTC ||
 					ev.c == K_ALTV)
