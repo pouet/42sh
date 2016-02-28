@@ -50,17 +50,75 @@ void	print_char(char c)
 	ft_tputs("ei");
 }
 
+void	print_line(t_line *l, char *prompt);
+void	movelr(t_line *l, int move);
+
+void	movelr_nl(t_line *l, int move)
+{
+	char	*t;
+	int		i;
+	int		tmp;
+
+	if (move == K_LEFT && l->i > 0 && l->s[l->i] == '\n')
+	{
+		ft_tputs("cr");
+		ft_tputs("up");
+		t = ft_strchr(l->s, '\n');
+		if (t != NULL && l->i <= t - l->s)
+		{
+			i = 0;
+			while (i < l->lenprompt)
+			{
+				ft_tputs("nd");
+				i++;
+			}
+		}
+		i = l->i - 1;
+		while (i > 0 && l->s[i] != '\n')
+			i--;
+		if (i != l->i - 1 && l->s[i] == '\n')
+			i++;
+		tmp = l->i;
+		l->i = i;
+//		eprintf("%d\n", tmp-i);
+		while (tmp - i > 0)
+		{
+			if (l->s[l->i] == '\n')
+			{
+				ft_tputs("nd");
+				l->i++;
+			}
+			else
+				movelr(l, K_RIGHT);
+			i++;
+//			ft_tputs("nd");
+//			i++;
+		}
+			ft_tputs("nd");
+	}
+	else if (move == K_RIGHT && l->i < l->len)
+	{
+	}
+}
+
 void	movelr(t_line *l, int move)
 {
 	if (move == K_LEFT && l->i > 0)
 	{
 		l->i--;
-		ft_tputs("le");
+		if (l->s[l->i] == '\n')
+		{
+			movelr_nl(l, move);
+//			ft_tputs("up");
+		}
+//		else
+			ft_tputs("le");
 	}
 	else if (move == K_RIGHT && l->i < l->len)
 	{
 		l->i++;
-		if ((l->i + l->lenprompt) % l->col == 0 || l->s[l->i] == '\n')
+		if ((l->i + l->lenprompt) % l->col == 0 ||
+			(l->i > 0 && l->s[l->i - 1] == '\n'))
 		{
 			ft_tputs("do");
 			ft_tputs("cr");
@@ -146,6 +204,8 @@ void	moveupdown(t_line *l, int move)
 
 	if (move == K_ALTUP)
 	{
+		if (l->s[l->i] == '\n')
+			l->i--;
 		i = 0;
 		while (l->i > 0 && i < l->col && l->s[l->i] != '\n')
 		{
@@ -155,6 +215,8 @@ void	moveupdown(t_line *l, int move)
 	}
 	else if (move == K_ALTDWN)
 	{
+		if (l->s[l->i] == '\n')
+			l->i++;
 		i = 0;
 		while (l->i < l->len && i < l->col && l->s[l->i] != '\n')
 		{
