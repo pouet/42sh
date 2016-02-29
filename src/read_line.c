@@ -193,35 +193,14 @@ void	movelr(t_line *l, int move)
 
 void	clrscr_down(t_line *l)
 {
-//	char	*s;
-
-/*	s = tgetstr("UP", NULL);
-	s = tgoto(s, l->row, 0);
-	tputs(s, 1, ft_putchar_tty);*/
-//	printf("[%d-%c-%d-%d]", l->oldrow, l->s[l->i - 1], l->row, l->col);
 	if (l->currow > 0)
-//	printf("%d-", l->row);
 		mv_cur("UP", 0, l->currow);
-//	l->oldrow = 0;
 	ft_tputs("cr");
 	ft_tputs("cd");
-/*	s = tgetstr("RI", NULL);
-	s = tgoto(s, 0, l->lenprompt);
-	tputs(s, 1, ft_putchar_tty);*/
-//	l->oldcol = 0;
 }
 
 void	movecur_backtoi(t_line *l)
 {
-	/*
-	int		i;
-
-	l->currow = l->row;
-	l->curcol = l->col;
-	i = l->i;
-	l->i = l->len;
-	while (l->i > i)
-		movecurlr(l, K_LEFT);*/
 	ft_tputs("cr");
 	if (l->row > 0)
 		mv_cur("UP", 0, l->row);
@@ -248,7 +227,6 @@ void	print_line(t_line *l, char *prompt)
 {
 	int		i;
 
-//	clrscr_down(l);
 	l->oldrow = l->row;
 	l->oldcol = l->col;
 	putprompt_lastline(prompt);
@@ -275,7 +253,6 @@ void	print_line(t_line *l, char *prompt)
 	}
 	if (l->col == 0)
 		ft_putchar(' ');
-//	ft_putstr(l->s);
 	movecur_backtoi(l);
 }
 
@@ -316,17 +293,90 @@ char	*add_char(t_line *l, char c)
 void	moveupdown(t_line *l, int move)
 {
 	int		i;
+	int		len;
+	int		rowsav;
+	int		colsav;
 
 	if (move == K_ALTUP)
 	{
+		rowsav = l->currow;
+		colsav = l->curcol;
+		while (l->i > 0 && l->currow > rowsav - 2)
+			movelr(l, K_LEFT);
+		movelr(l, K_RIGHT);
 		if (l->s[l->i] == '\n')
-			l->i--;
-		i = 0;
-		while (l->i > 0 && i < l->wincol && l->s[l->i] != '\n')
+			movelr(l, K_RIGHT);
+		printf("%d-", l->i);
+		if (l->currow == rowsav - 1)
+		{
+			len = l->i + colsav;
+			printf("%d-", len);
+			while (l->i < l->len && l->s[l->i] != '\n' && len > 0)
+			{
+				movelr(l, K_RIGHT);
+				len--;
+			}
+		}
+/*		i = l->i;
+		if (l->s[i] == '\n')
+			i--;
+		while (i > 0 && l->s[i] != '\n')
+			i--;
+		len = i;
+		if (i > 0 && l->s[i] == '\n')
+			i--;
+		while (i > 0 && l->s[i] != '\n')
+			i--;
+		if (l->s[i] == '\n')
+			i++;
+		printf("[%d-%d]", i, len);
+		if (i + l->col > len)
+			i = len;
+		else
+			i = i + l->col;
+		printf("%d-", i);
+		while (l->i > i)
+			movelr(l, K_LEFT);*/
+
+
+
+
+/*		len = 0;
+		i = l->i - (l->col + 1);
+		if (i < 0)
+			i = 0;
+		if (l->s[i] == '\n')
+		{
+			len = i;
+			i--;
+		}
+		while (i > 0 && l->s[i] != '\n')
+			i--;
+		if (l->s[i] == '\n')
+			i++;
+		if (i + l->col >= len)
+			i = len;
+		else
+			i += l->col;
+		if ((l->i - (l->col + 1)) < i + l->col)
+			len = l->col + 1;
+		else
+			len = ((l->i - (l->col + 1) - 0) - i) + l->col + 0;
+		printf("[%d-%d-%c-%d-%d]", l->i, i, l->s[i], len, l->col);
+		i = l->i - i;
+		while (i < len)
 		{
 			movelr(l, K_LEFT);
 			i++;
 		}
+//		if (l->s[l->i] == '\n')
+//			l->i--;
+//		i = 0;
+//		while (l->i > 0 && i < l->wincol && l->s[l->i] != '\n')
+		{
+//			movelr(l, K_LEFT);
+//			i++;
+		}*/
 	}
 	else if (move == K_ALTDWN)
 	{
