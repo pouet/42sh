@@ -356,7 +356,7 @@ void	histo_key(t_history *h, t_line *l, int move)
 
 	if (h == NULL)
 		return ;
-	clrscr_down(l);
+//	clrscr_down(l);
 	i = l->i;
 	l->i = 0;
 	movecur_backtoi(l);
@@ -367,6 +367,13 @@ void	histo_key(t_history *h, t_line *l, int move)
 		ret = histo_down(h, l);
 	if (ret == 0)
 		l->i = i;
+	else
+	{
+//		clrscr_down(l);
+		ft_putstr(l->s);
+		l->i = l->len;
+	sleep(2);
+	}
 }
 
 char	*read_line(char *prompt, t_history *h)

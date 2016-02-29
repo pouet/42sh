@@ -19,6 +19,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "error.h"
+#include "read_line.h"
 
 int		get_nbr(char *s, char **t)
 {
@@ -95,9 +96,30 @@ int		dup_fd(t_symbol sym, char *redir, char *word)
 
 int		heredoc(t_symbol sym, char *redir, char *word)
 {
+	int		fd[2];
+	char	*s;
+	char	*t;
+	char	*tmp;
+
 	(void)sym;
-	(void)redir;
-	(void)word;
+	s = ft_strnew(1);
+	while (1)
+	{
+		t = read_line(">> ", NULL);
+		if (t == NULL || ft_strcmp(t, word) == 0)
+			break ;
+		tmp = ft_strjoin(s, t);
+		free(t);
+		free(s);
+		s = ft_strjoin(tmp, "\n");
+		free(tmp);
+	}
+	pipe(fd);
+	write(fd[1], s, ft_strlen(s));
+	free(s);
+	close(fd[1]);
+	dup2(fd[0], 0);
+	close(fd[0]);
 	return (0);
 }
 
@@ -135,7 +157,7 @@ int		do_redirection(t_tree *tree, int i)
 	else if (tree->child[i]->token->sym == S_DUPIN ||
 			tree->child[i]->token->sym == S_DUPOUT)
 		ret = dup_fd(tree->child[i]->token->sym, tree->child[i]->token->s, s);
-	else if (tree->child[i]->token->sym == S_HERESTR)
+	else if (tree->child[i]->token->sym == S_HEREDOC)
 		ret = heredoc(tree->child[i]->token->sym, tree->child[i]->token->s, s);
 	del_redir(tree, i, j);
 	return (ret);
