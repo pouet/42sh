@@ -31,7 +31,7 @@
 int		ft_putchar_tty(int c);
 void	ft_tputs(char *s);
 void	clr_screen(void);
-void	mv_cur(int hpos, int vpos);
+void	mv_cur(char *cap, int hpos, int vpos);
 void	print_txt(char *s, int hpos, int vpos, unsigned type);
 
 #endif

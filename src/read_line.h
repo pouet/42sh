@@ -21,7 +21,13 @@ typedef struct	s_line
 	int				lenmax;
 	int				lenprompt;
 	int				col;
-	int				lig;
+	int				row;
+	int				oldcol;
+	int				oldrow;
+	int				wincol;
+	int				winrow;
+	int				curcol;
+	int				currow;
 }				t_line;
 
 typedef struct		s_history

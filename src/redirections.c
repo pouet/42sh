@@ -102,6 +102,7 @@ int		heredoc(t_symbol sym, char *redir, char *word)
 	char	*tmp;
 
 	(void)sym;
+	(void)redir;
 	s = ft_strnew(1);
 	while (1)
 	{

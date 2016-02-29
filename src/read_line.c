@@ -51,7 +51,7 @@ void	print_char(char c)
 }
 
 void	print_line(t_line *l, char *prompt);
-void	movelr(t_line *l, int move);
+void	movecurlr(t_line *l, int move);
 
 void	movelr_nl(t_line *l, int move)
 {
@@ -89,7 +89,7 @@ void	movelr_nl(t_line *l, int move)
 				l->i++;
 			}
 			else
-				movelr(l, K_RIGHT);
+				movecurlr(l, K_RIGHT);
 			i++;
 //			ft_tputs("nd");
 //			i++;
@@ -101,23 +101,51 @@ void	movelr_nl(t_line *l, int move)
 	}
 }
 
-void	movelr(t_line *l, int move)
+void	movecurlr(t_line *l, int move)
 {
+	int		i;
+
 	if (move == K_LEFT && l->i > 0)
 	{
-		l->i--;
-		if (l->s[l->i] == '\n')
+		if (l->row > 0)
+			mv_cur("UP", 0, l->row);
+		ft_tputs("cr");
+		mv_cur("DO", 0, l->currow);
+		mv_cur("RI", l->curcol, 0);
+
+/*		l->i--;
+		l->curcol--;
+//		if (l->s[l->i] == '\n')
+//			printf("[%d-%d]", l->i, l->curcol);
+		if (l->curcol < 0)
 		{
-			movelr_nl(l, move);
-//			ft_tputs("up");
+			printf("[%d-%d]", l->i, l->curcol);
+			l->currow--;
+			l->curcol = 0;
+			if (l->currow == 0)
+				l->curcol = l->lenprompt;
+//		ft_tputs("cr");
+//		ft_tputs("up");
+			i = l->i - 1;
+			while (i > 0 && l->s[i] != '\n')
+			{
+				i--;
+				l->curcol++;
+//			ft_tputs("le");
+			}
+			printf("[%d-%d]", l->i, l->curcol);
+//			movelr_nl(l, move);
+			ft_tputs("cr");
+			ft_tputs("up");
+			mv_cur("RI", l->curcol, 0);
 		}
-//		else
-			ft_tputs("le");
+		else
+			ft_tputs("le");*/
 	}
 	else if (move == K_RIGHT && l->i < l->len)
 	{
 		l->i++;
-		if ((l->i + l->lenprompt) % l->col == 0 ||
+		if ((l->i + l->lenprompt) % l->wincol == 0 ||
 			(l->i > 0 && l->s[l->i - 1] == '\n'))
 		{
 			ft_tputs("do");
@@ -128,26 +156,80 @@ void	movelr(t_line *l, int move)
 	}
 }
 
-void	clrscr_down(t_line *l)
+void	movelr(t_line *l, int move)
 {
 	int		i;
 
-	i = l->i;
-	while (l->i != 0)
-		movelr(l, K_LEFT);
-	l->i = i;
+	if (move == K_LEFT && l->i > 0)
+	{
+		l->i--;
+		l->curcol--;
+		if (l->curcol < 0)
+		{
+			l->currow--;
+			l->curcol = 0;
+			if (l->currow == 0)
+				l->curcol = l->lenprompt;
+			i = l->i;
+			/* TODO: indice de '\n' sans le -1 */
+			while (i > 0 && l->curcol < l->wincol - 1 && l->s[i] != '\n')
+			{
+				i--;
+				l->curcol++;
+			}
+		}
+	}
+	else if (move == K_RIGHT && l->i < l->len)
+	{
+		l->i++;
+		l->curcol++;
+		if (l->curcol >= l->wincol || (l->i < l->len && l->s[l->i] == '\n'))
+		{
+			l->currow++;
+			l->curcol = 0;
+		}
+	}
+}
+
+void	clrscr_down(t_line *l)
+{
+//	char	*s;
+
+/*	s = tgetstr("UP", NULL);
+	s = tgoto(s, l->row, 0);
+	tputs(s, 1, ft_putchar_tty);*/
+//	printf("[%d-%c-%d-%d]", l->oldrow, l->s[l->i - 1], l->row, l->col);
+	if (l->currow > 0)
+//	printf("%d-", l->row);
+		mv_cur("UP", 0, l->currow);
+//	l->oldrow = 0;
 	ft_tputs("cr");
 	ft_tputs("cd");
+/*	s = tgetstr("RI", NULL);
+	s = tgoto(s, 0, l->lenprompt);
+	tputs(s, 1, ft_putchar_tty);*/
+//	l->oldcol = 0;
 }
 
 void	movecur_backtoi(t_line *l)
 {
+	/*
 	int		i;
 
+	l->currow = l->row;
+	l->curcol = l->col;
 	i = l->i;
 	l->i = l->len;
 	while (l->i > i)
-		movelr(l, K_LEFT);
+		movecurlr(l, K_LEFT);*/
+	ft_tputs("cr");
+	if (l->row > 0)
+		mv_cur("UP", 0, l->row);
+	if (l->currow > 0)
+		mv_cur("DO", 0, l->currow);
+	if (l->curcol > 0)
+		mv_cur("RI", 0, l->curcol);
+//	printf("[%d-%d-%d-%d]", l->row, l->col, l->currow, l->curcol);
 }
 
 void	putprompt_lastline(char *prompt)
@@ -164,9 +246,36 @@ void	putprompt_lastline(char *prompt)
 
 void	print_line(t_line *l, char *prompt)
 {
-	clrscr_down(l);
+	int		i;
+
+//	clrscr_down(l);
+	l->oldrow = l->row;
+	l->oldcol = l->col;
 	putprompt_lastline(prompt);
-	ft_putstr(l->s);
+	l->col = l->lenprompt;
+	l->row = 0;
+//	mv_cur("RI", 0, l->lenprompt);
+	i = 0;
+	while (i < l->len)
+	{
+		ft_putchar(l->s[i]);
+		if (l->s[i] == '\n')
+		{
+			l->row++;
+			l->col = 0;
+		}
+		else
+			l->col++;
+		if (l->col >= l->wincol)
+		{
+			l->row++;
+			l->col = 0;
+		}
+		i++;
+	}
+	if (l->col == 0)
+		ft_putchar(' ');
+//	ft_putstr(l->s);
 	movecur_backtoi(l);
 }
 
@@ -195,6 +304,12 @@ char	*add_char(t_line *l, char c)
 	l->i++;
 	l->len++;
 	l->s[l->len] = '\0';
+	l->curcol++;
+	if (l->curcol >= l->wincol)
+	{
+		l->curcol = 0;
+		l->currow++;
+	}
 	return (l->s);
 }
 
@@ -207,7 +322,7 @@ void	moveupdown(t_line *l, int move)
 		if (l->s[l->i] == '\n')
 			l->i--;
 		i = 0;
-		while (l->i > 0 && i < l->col && l->s[l->i] != '\n')
+		while (l->i > 0 && i < l->wincol && l->s[l->i] != '\n')
 		{
 			movelr(l, K_LEFT);
 			i++;
@@ -218,7 +333,7 @@ void	moveupdown(t_line *l, int move)
 		if (l->s[l->i] == '\n')
 			l->i++;
 		i = 0;
-		while (l->i < l->len && i < l->col && l->s[l->i] != '\n')
+		while (l->i < l->len && i < l->wincol && l->s[l->i] != '\n')
 		{
 			movelr(l, K_RIGHT);
 			i++;
@@ -252,44 +367,32 @@ void	moveword(t_line *l, int move)
 
 void	delchar(t_line *l, int move)
 {
-	ft_tputs("dm");
 	if (move == K_BCKSP && l->i > 0)
 	{
-		ft_tputs("le");
-		ft_tputs("dc");
 		ft_memmove(l->s + l->i - 1, l->s + l->i, l->len - l->i);
-		l->i--;
+		movelr(l, K_LEFT);
 		l->len--;
 		l->s[l->len] = '\0';
 	}
 	else if (move == K_DEL && l->i < l->len)
 	{
-		ft_tputs("dc");
 		ft_memmove(l->s + l->i, l->s + l->i + 1, l->len - l->i);
 		l->len--;
 		l->s[l->len] = '\0';
 	}
-	ft_tputs("ed");
 }
 
 void	move_homeend(t_line *l, int move)
 {
-	int		i;
-
-	ft_tputs("rc");
 	if (move == K_HOME)
 	{
-		l->i = 0;
+		while (l->i > 0)
+			movelr(l, K_LEFT);
 	}
 	else if (move == K_END)
 	{
-		l->i = l->len;
-		i = 0;
-		while (i < l->len)
-		{
-			ft_tputs("nd");
-			i++;
-		}
+		while (l->i < l->len)
+			movelr(l, K_RIGHT);
 	}
 }
 
@@ -311,13 +414,7 @@ void	clipboard_key(t_line *l, int move)
 		clip_copy(C_CPYALL, l);
 	else if (move == K_ALTV)
 		clip_paste(l);
-/*	ft_tputs("rc");
-	ft_tputs("ce");
-	ft_putstr(l->s);
-	ft_tputs("rc");
-	i = 0;
-	while (i++ < l->i)
-		ft_tputs("nd");*/
+	/* TODO: maj des coordonnees 'cur' */
 }
 
 int		lenprompt(char *prompt)
@@ -351,29 +448,17 @@ int		lenprompt(char *prompt)
 
 void	histo_key(t_history *h, t_line *l, int move)
 {
-	int		i;
-	int		ret;
-
 	if (h == NULL)
 		return ;
-//	clrscr_down(l);
-	i = l->i;
-	l->i = 0;
-	movecur_backtoi(l);
-	ret = 1;
 	if (move == K_UP)
-		ret = histo_up(h, l);
+		histo_up(h, l);
 	else if (move == K_DOWN)
-		ret = histo_down(h, l);
-	if (ret == 0)
-		l->i = i;
-	else
-	{
-//		clrscr_down(l);
-		ft_putstr(l->s);
-		l->i = l->len;
-	sleep(2);
-	}
+		histo_down(h, l);
+	l->i = 0;
+	l->curcol = l->lenprompt;
+	l->currow = 0;
+	while (l->i < l->len)
+		movelr(l, K_RIGHT);
 }
 
 char	*read_line(char *prompt, t_history *h)
@@ -387,13 +472,20 @@ char	*read_line(char *prompt, t_history *h)
 	ft_putstr(prompt);
 	l = new_line();
 	l->lenprompt = lenprompt(prompt);
+	l->col = l->lenprompt;
+	l->row = 0;
+	l->oldcol = l->col;
+	l->oldrow = l->row;
+	l->curcol = l->col;
+	l->currow = l->row;
 	while ((ret = getevents(&ev)) > 0/* || (ret == 0 && ev.c == '\n')*/)
 	{
 //		ioctl(0, TIOCGWINSZ, &ws);
 //		l->col = ws.ws_col;
 //		l->lig = ws.ws_row;
-		l->col = tgetnum("co");
-		l->lig = tgetnum("li");
+		l->wincol = tgetnum("co");
+		l->winrow = tgetnum("li");
+		clrscr_down(l);
 		if (ev.type == T_ALPHA)
 		{
 			add_char(l, ev.c);

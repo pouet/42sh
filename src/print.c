@@ -32,11 +32,11 @@ void	clr_screen(void)
 	ft_tputs(CLRSCR);
 }
 
-void	mv_cur(int hpos, int vpos)
+void	mv_cur(char *cap, int hpos, int vpos)
 {
 	char		*s;
 
-	s = tgetstr(MVCUR, NULL);
+	s = tgetstr(cap, NULL);
 	s = tgoto(s, hpos, vpos);
 	tputs(s, 1, ft_putchar_tty);
 }
@@ -47,7 +47,7 @@ void	print_txt(char *s, int hpos, int vpos, unsigned type)
 		ft_tputs(SRVIDEO);
 	if (type & TXT_UDRL)
 		ft_tputs(SUNDERL);
-	mv_cur(hpos, vpos);
+	mv_cur("cm", hpos, vpos);
 	ft_putstr_fd(s, 1);
 	ft_tputs(URVIDEO);
 	ft_tputs(UUNDERL);
