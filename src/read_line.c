@@ -251,20 +251,20 @@ void	moveword(t_line *l, int move)
 {
 	if (move == K_ALTLFT && l->i > 0)
 	{
-		while (l->i > 0 && l->s[l->i - 1] == ' ')
+		while (l->i > 0 && !ft_isalnum(l->s[l->i - 1]))
 			movelr(l, K_LEFT);
-		while (l->i > 0 && l->s[l->i - 1] != ' ')
+		while (l->i > 0 && ft_isalnum(l->s[l->i - 1]))
 			movelr(l, K_LEFT);
-		if (l->s[l->i] == ' ' && l->i != 0)
+		if (!ft_isalnum(l->s[l->i]) && l->i != 0)
 			movelr(l, K_RIGHT);
 	}
 	else if (move == K_ALTRGT && l->i < l->len)
 	{
-		while (l->i < l->len && l->s[l->i] != ' ')
+		while (l->i < l->len && ft_isalnum(l->s[l->i]))
 			movelr(l, K_RIGHT);
-		while (l->i < l->len && l->s[l->i] == ' ')
+		while (l->i < l->len && !ft_isalnum(l->s[l->i]))
 			movelr(l, K_RIGHT);
-		if (l->s[l->i] == ' ' && l->i != l->len)
+		if (!ft_isalnum(l->s[l->i]) && l->i != l->len)
 			movelr(l, K_LEFT);
 	}
 }
