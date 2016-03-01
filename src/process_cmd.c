@@ -119,13 +119,12 @@ int		find_cmd(t_token *token, t_env *env)
 {
 	int		ret;
 
-	if (token == NULL)
+	if (token == NULL || ft_strcmp(token->s, ".") == 0
+		|| ft_strcmp(token->s, "..") == 0)
 		return (0);
 	if (ft_strchr(token->s, '/'))
 	{
-		if (have_permission(token->s) == 0)
-			return (0);
-		if (access(token->s, X_OK) != 0)
+		if (have_permission(token->s) == 0 || access(token->s, X_OK) != 0)
 			return (0);
 		token->sym = S_COMMAND;
 	}
