@@ -38,7 +38,11 @@ t_line	*new_line(void)
 
 char	*linetos(t_line *l)
 {
-	return (l->s);
+	char	*s;
+
+	s = l->s;
+	free(l);
+	return (s);
 }
 
 void	print_char(char c)
@@ -57,8 +61,10 @@ void	movecurlr(t_line *l, int move)
 		if (l->row > 0)
 			mv_cur("UP", 0, l->row);
 		ft_tputs("cr");
-		mv_cur("DO", 0, l->currow);
-		mv_cur("RI", l->curcol, 0);
+		if (l->currow > 0)
+			mv_cur("DO", 0, l->currow);
+		if (l->curcol > 0)
+			mv_cur("RI", l->curcol, 0);
 	}
 	else if (move == K_RIGHT && l->i < l->len)
 	{
@@ -122,7 +128,6 @@ void	movecur_backtoi(t_line *l)
 		mv_cur("DO", 0, l->currow);
 	if (l->curcol > 0)
 		mv_cur("RI", 0, l->curcol);
-//	printf("[%d-%d-%d-%d]", l->row, l->col, l->currow, l->curcol);
 }
 
 void	putprompt_lastline(char *prompt)
@@ -146,7 +151,6 @@ void	print_line(t_line *l, char *prompt)
 	putprompt_lastline(prompt);
 	l->col = l->lenprompt;
 	l->row = 0;
-//	mv_cur("RI", 0, l->lenprompt);
 	i = 0;
 	while (i < l->len)
 	{
@@ -167,7 +171,6 @@ void	print_line(t_line *l, char *prompt)
 	}
 	if (l->col == 0)
 		ft_putchar(' ');
-//	ft_putnbr(l->len);
 	movecur_backtoi(l);
 }
 
@@ -370,15 +373,33 @@ void	histo_key(t_history *h, t_line *l, int move)
 		movelr(l, K_RIGHT);
 }
 
+#include <sys/ioctl.h>
+#include <signal.h>
+static int	g_sigint_line;
+
+void	sigint_line(int sig)
+{
+	char	c;
+
+	(void)sig;
+	c = '\n';
+	g_sigint_line = 1;
+	ioctl(0, TIOCSTI, &c);
+	signal(SIGINT, SIG_IGN);
+}
+
 char	*read_line(char *prompt, t_history *h)
 {
 	t_line			*l;
 	int				ret;
 	t_events		ev;
-	int				i;
+//	int				i;
 //	struct winsize	ws;
 
-	ft_tputs("sc");
+	signal(SIGINT, sigint_line);
+	g_sigint_line = 0;
+
+//	ft_tputs("sc");
 	ft_putstr(prompt);
 	l = new_line();
 	l->lenprompt = lenprompt(prompt);
@@ -390,6 +411,12 @@ char	*read_line(char *prompt, t_history *h)
 	l->currow = l->row;
 	while ((ret = getevents(&ev)) > 0/* || (ret == 0 && ev.c == '\n')*/)
 	{
+		if (g_sigint_line != 0)
+		{
+			/* TODO: a refaire pour le multiligne avec guillemets... */
+			l->s[0] = '\0';
+			break ;
+		}
 //		ioctl(0, TIOCGWINSZ, &ws);
 //		l->col = ws.ws_col;
 //		l->lig = ws.ws_row;
@@ -406,7 +433,7 @@ char	*read_line(char *prompt, t_history *h)
 //				i = 0;
 //				while (i < l->row)
 //				{
-					ft_putendl("");
+//					ft_putendl("");
 //					i++;
 //				}
 				break ;
@@ -432,11 +459,16 @@ char	*read_line(char *prompt, t_history *h)
 				clipboard_key(l, ev.c);
 			else if (ev.c == K_CTRLD)
 			{
+				free(l->s);
+				l->s = NULL;
+				break ;
 				/* free t_line */
-				return (NULL);
+//				return (NULL);
 			}
 			print_line(l, prompt);
 		}
 	}
+	signal(SIGINT, SIG_IGN);
+	ft_putendl("");
 	return (linetos(l));
 }

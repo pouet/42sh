@@ -181,6 +181,58 @@ int		launch_process(t_tree *tree, t_env *env)
 	exit(1);
 }
 
+#define N_SIG 32
+static char		*g_ssig[N_SIG] = {
+	"",
+	"",
+	"",
+	"",
+	"SIGILL: illegal instruction\n",
+	"SIGTRAP: trace trap\n",
+	"SIGABRT: abort program\n",
+	"SIGEMT: emulate instruction executed\n",
+	"SIGFPE: floating-point exception\n",
+	"",
+	"SIGBUS: bus error\n",
+	"SIGSEGV: segmentation fault\n",
+	"SIGSYS: non-existent system call invoked\n",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+};
+
+int		checkstatus(int stat_loc)
+{
+	int		sig;
+
+	if (WIFEXITED(stat_loc))
+		return (WEXITSTATUS(stat_loc));
+	if (WIFSIGNALED(stat_loc))
+	{
+		sig = WTERMSIG(stat_loc);
+		if (sig > 0 && sig < N_SIG)
+			eprintf("%s", g_ssig[sig]);
+		return (sig);
+	}
+	return (0);
+}
+
 int		fork_process(t_tree *tree, t_env *env, t_env *new)
 {
 	pid_t	pid;
@@ -202,6 +254,7 @@ int		fork_process(t_tree *tree, t_env *env, t_env *new)
 		{
 			while (waitpid(pid, &stat_loc, WNOHANG) == 0)
 				;
+			checkstatus(stat_loc);
 		}
 	}
 	restore_stdfd(fd_sav);
