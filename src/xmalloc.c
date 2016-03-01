@@ -21,7 +21,7 @@ void	*xmalloc(size_t size)
 	ptr = malloc(size);
 	if (ptr == NULL)
 	{
-		ft_putendl_fd("malloc failed", 2);
+		ft_putendl_fd("error: malloc failed", 2);
 		exit(1);
 	}
 	return (ptr);

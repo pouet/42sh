@@ -50,61 +50,8 @@ void	print_char(char c)
 	ft_tputs("ei");
 }
 
-void	print_line(t_line *l, char *prompt);
-void	movecurlr(t_line *l, int move);
-
-void	movelr_nl(t_line *l, int move)
-{
-	char	*t;
-	int		i;
-	int		tmp;
-
-	if (move == K_LEFT && l->i > 0 && l->s[l->i] == '\n')
-	{
-		ft_tputs("cr");
-		ft_tputs("up");
-		t = ft_strchr(l->s, '\n');
-		if (t != NULL && l->i <= t - l->s)
-		{
-			i = 0;
-			while (i < l->lenprompt)
-			{
-				ft_tputs("nd");
-				i++;
-			}
-		}
-		i = l->i - 1;
-		while (i > 0 && l->s[i] != '\n')
-			i--;
-		if (i != l->i - 1 && l->s[i] == '\n')
-			i++;
-		tmp = l->i;
-		l->i = i;
-//		eprintf("%d\n", tmp-i);
-		while (tmp - i > 0)
-		{
-			if (l->s[l->i] == '\n')
-			{
-				ft_tputs("nd");
-				l->i++;
-			}
-			else
-				movecurlr(l, K_RIGHT);
-			i++;
-//			ft_tputs("nd");
-//			i++;
-		}
-			ft_tputs("nd");
-	}
-	else if (move == K_RIGHT && l->i < l->len)
-	{
-	}
-}
-
 void	movecurlr(t_line *l, int move)
 {
-	int		i;
-
 	if (move == K_LEFT && l->i > 0)
 	{
 		if (l->row > 0)
@@ -112,35 +59,6 @@ void	movecurlr(t_line *l, int move)
 		ft_tputs("cr");
 		mv_cur("DO", 0, l->currow);
 		mv_cur("RI", l->curcol, 0);
-
-/*		l->i--;
-		l->curcol--;
-//		if (l->s[l->i] == '\n')
-//			printf("[%d-%d]", l->i, l->curcol);
-		if (l->curcol < 0)
-		{
-			printf("[%d-%d]", l->i, l->curcol);
-			l->currow--;
-			l->curcol = 0;
-			if (l->currow == 0)
-				l->curcol = l->lenprompt;
-//		ft_tputs("cr");
-//		ft_tputs("up");
-			i = l->i - 1;
-			while (i > 0 && l->s[i] != '\n')
-			{
-				i--;
-				l->curcol++;
-//			ft_tputs("le");
-			}
-			printf("[%d-%d]", l->i, l->curcol);
-//			movelr_nl(l, move);
-			ft_tputs("cr");
-			ft_tputs("up");
-			mv_cur("RI", l->curcol, 0);
-		}
-		else
-			ft_tputs("le");*/
 	}
 	else if (move == K_RIGHT && l->i < l->len)
 	{
@@ -158,7 +76,6 @@ void	movecurlr(t_line *l, int move)
 
 void	movelr(t_line *l, int move)
 {
-	int		i;
 	int		len;
 
 	if (move == K_LEFT && l->i > 0)
@@ -167,25 +84,12 @@ void	movelr(t_line *l, int move)
 		l->curcol--;
 		if (l->curcol < 0)
 		{
-			l->currow--;
-			l->curcol = 0;
 			len = l->i;
-			while (len > 0 && l->s[len - 1] != '\n')
-				len--;
-			if (l->currow == 0)
-				l->curcol = l->lenprompt;
-//			i = l->i % l->wincol;
-			if (len < l->curcol)
-				i = (((l->i - len) + 0 + l->lenprompt) % l->wincol);
-			else
-				i = (((l->i - len) + 0 ) % l->wincol);
-			printf("[%d-%d-%d]", l->i, i, len);
-			/* TODO: indice de '\n' sans le -1 */
-			while (i > 0 && l->s[i - 1] != '\n' && l->curcol < l->wincol - 1)
-			{
-				i--;
-				l->curcol++;
-			}
+			l->i = 0;
+			l->currow = 0;
+			l->curcol = l->lenprompt;
+			while (l->i < len)
+				movelr(l, K_RIGHT);
 		}
 	}
 	else if (move == K_RIGHT && l->i < l->len)
@@ -303,7 +207,6 @@ char	*add_char(t_line *l, char c)
 
 void	moveupdown(t_line *l, int move)
 {
-	int		i;
 	int		len;
 	int		rowsav;
 	int		colsav;
@@ -312,17 +215,11 @@ void	moveupdown(t_line *l, int move)
 	{
 		rowsav = l->currow;
 		colsav = l->curcol;
-//		if (l->s[l->i] == '\n')
-//			movelr(l, K_LEFT);
-//		while (l->i > 0 && l->s[l->i] != '\n')
 		while (l->i > 0 && l->curcol > 0)
 			movelr(l, K_LEFT);
 		movelr(l, K_LEFT);
-//		while (l->i > 0 && l->s[l->i] != '\n')
 		while (l->i > 0 && l->curcol > 0)
 			movelr(l, K_LEFT);
-//		if (l->s[l->i] == '\n')
-//			movelr(l, K_RIGHT);
 		if (l->currow != rowsav)
 		{
 			len = colsav;
@@ -339,27 +236,14 @@ void	moveupdown(t_line *l, int move)
 	{
 		rowsav = l->currow;
 		colsav = l->curcol;
-//		while (l->i < l->len && l->s[l->i] != '\n')
 		while (l->i < l->len && l->curcol != 0)
 			movelr(l, K_RIGHT);
-//		if (l->s[l->i] == '\n')
-//			movelr(l, K_RIGHT);
 		len = colsav;
 		while (l->i < l->len && l->s[l->i] != '\n' && len > 0)
 		{
 			movelr(l, K_RIGHT);
 			len--;
 		}
-/*		if (l->s[l->i] == '\n')
-			l->i++;
-		i = 0;
-		while (l->i < l->len && i < l->wincol && l->s[l->i] != '\n')
-		{
-			movelr(l, K_RIGHT);
-			i++;
-		}
-		if (l->s[l->i] == '\n')
-			movelr(l, K_RIGHT);*/
 	}
 }
 
@@ -434,7 +318,12 @@ void	clipboard_key(t_line *l, int move)
 		clip_copy(C_CPYALL, l);
 	else if (move == K_ALTV)
 		clip_paste(l);
-	/* TODO: maj des coordonnees 'cur' */
+	i = l->i;
+	l->i = 0;
+	l->currow = 0;
+	l->curcol = l->lenprompt;
+	while (l->i < i)
+		movelr(l, K_RIGHT);
 }
 
 int		lenprompt(char *prompt)
@@ -514,12 +403,12 @@ char	*read_line(char *prompt, t_history *h)
 //			print_char(ev.c);
 			if (ev.c == '\n')
 			{
-				i = 0;
-				while (i < l->row)
-				{
+//				i = 0;
+//				while (i < l->row)
+//				{
 					ft_putendl("");
-					i++;
-				}
+//					i++;
+//				}
 				break ;
 			}
 		}
