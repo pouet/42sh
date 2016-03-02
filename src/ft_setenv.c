@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/05 11:12:22 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/11 10:07:40 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 14:04:54 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "ft_env.h"
 #include "parser.h"
 #include "error.h"
+#include "hashtable.h"
 
 /*
 ** name_value => NAME=VALUE
@@ -44,6 +45,11 @@ t_env	*ft_setenv_byname(t_env *env, char *name_value)
 		env = ft_lstpushback(env, env_newelement(name_value));
 	else
 		ft_strncpy(tmp->content, name_value, BUFF_SZ);
+	if (ft_strncmp(name_value, "PATH=", 5) == 0)
+	{
+		hash_del(env->content);
+		env->content = hash_createfile(env);
+	}
 	return (env);
 }
 
@@ -93,6 +99,11 @@ t_env	*ft_unsetenv_byname(t_env *env, char *name)
 	p->next = tmp->next;
 	free(tmp->content);
 	free(tmp);
+	if (ft_strcmp(name, "PATH") == 0)
+	{
+		hash_del(env->content);
+		env->content = hash_createfile(env);
+	}
 	return (env);
 }
 

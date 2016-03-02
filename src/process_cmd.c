@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 12:10:25 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 14:31:03 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,10 +98,16 @@ int		is_pathsearch(char *s, t_env *env)
 	t_hash	*hash;
 
 	hash = hash_exist(env->content, s);
-	if (hash == NULL)
+/*	if (hash == NULL)
 		puts("(NULL)");
 	else
-		printf("%s - %s\n", hash->cmd, hash->fullpath);
+		printf("%s - %s\n", hash->cmd, hash->fullpath);*/
+	if (hash == NULL || access(hash->fullpath, X_OK) != 0)
+	{
+		free(env->content);
+		env->content = hash_createfile(env);
+		return (is_pathsearch(s, env));
+	}
 	if (hash != NULL && access(hash->fullpath, X_OK) == 0)
 	{
 		ft_strncpy(s, hash->fullpath, BUFF_SZ);
