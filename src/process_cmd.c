@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 11:27:23 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 12:10:25 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include "ft_cd.h"
 #include "ft_exit.h"
 #include "redirections.h"
+#include "hashtable.h"
 
 t_builtinlist g_bt[NBUILTIN] = {
 	{ "env", ft_env },
@@ -89,12 +90,26 @@ int		have_permission(char *cmd)
 
 int		is_pathsearch(char *s, t_env *env)
 {
-	t_env	*env_path;
-	char	*path;
-	char	*p;
-	char	file[BUFF_SZ + 1];
+//	t_env	*env_path;
+//	char	*path;
+//	char	*p;
+//	char	file[BUFF_SZ + 1];
 
-	path = "./";
+	t_hash	*hash;
+
+	hash = hash_exist(env->content, s);
+	if (hash == NULL)
+		puts("(NULL)");
+	else
+		printf("%s - %s\n", hash->cmd, hash->fullpath);
+	if (hash != NULL && access(hash->fullpath, X_OK) == 0)
+	{
+		ft_strncpy(s, hash->fullpath, BUFF_SZ);
+		return (1);
+	}
+
+
+/*	path = "./";
 	env_path = env_getname(env, "PATH");
 	if (env_path != NULL)
 		path = env_path->content + 5;
@@ -111,7 +126,7 @@ int		is_pathsearch(char *s, t_env *env)
 		if (p == NULL)
 			break ;
 		path = p + 1;
-	}
+	}*/
 	return (0);
 }
 

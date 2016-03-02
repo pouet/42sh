@@ -6,13 +6,12 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 11:43:42 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 11:40:12 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 12:16:03 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
-#include "libft.h"
 #include "ft_env.h"
 #include "lexer.h"
 #include "parser.h"
@@ -77,7 +76,7 @@ void	hash_addfile(t_hash *hash, char *path)
 	{
 		if (ft_strcmp(dp->d_name, ".") != 0 &&
 				ft_strcmp(dp->d_name, "..") != 0 &&
-				dp->d_type == DT_REG)
+				access(dp->d_name, X_OK) == 0)
 		{
 			ft_strncpy(file, path, BUFF_SZ);
 			ft_strlcat(file, dp->d_name, BUFF_SZ);
@@ -87,7 +86,7 @@ void	hash_addfile(t_hash *hash, char *path)
 	closedir(dirp);
 }
 
-void	hash_createfile(t_env *env)
+t_hash		*hash_createfile(t_env *env)
 {
 	char	full[BUFF_SZ + 1];
 	char	*path;
@@ -98,7 +97,7 @@ void	hash_createfile(t_env *env)
 	hash = hash_new();
 	env_path = env_getname(env, "PATH");
 	if (env_path == NULL)
-		return ;
+		return (hash);
 	path = env_path->content + 5;
 	while (*path)
 	{
@@ -123,6 +122,7 @@ void	hash_createfile(t_env *env)
 			}
 		}
 	}*/
+	return (hash);
 }
 
 t_env	*create_env_environ(void)
@@ -147,7 +147,8 @@ t_env	*create_env_environ(void)
 		env = ft_setenv_byname(env, s);
 	}
 	env = set_shlvl(env);
-	hash_createfile(env);
+	free(env->content);
+	env->content = hash_createfile(env);
 	return (env);
 }
 
@@ -186,6 +187,8 @@ t_env	*free_env(t_env *env)
 	t_env		*tmp;
 
 	p = env->next;
+	hash_del(env->content);
+	env->content = hash_new();
 	env->next = NULL;
 	while (p)
 	{

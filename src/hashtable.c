@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/02 08:53:14 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 11:34:28 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 12:17:55 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ t_hash	*hash_exist(t_hash *hash, char *cmd)
 
 	key = hash_key(cmd);
 	tmp = hash + key;
-	while (tmp != NULL && tmp->key != key && ft_strcmp(tmp->cmd, cmd) != 0)
+	while (tmp != NULL && ft_strcmp(tmp->cmd, cmd) != 0)
 		tmp = tmp->next;
 	return (tmp);
 }
