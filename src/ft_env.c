@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 11:43:42 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 11:05:03 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 11:40:12 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,70 @@ t_env	*set_shlvl(t_env *env)
 	return (ft_setenv_byname(env, s));
 }
 
+#include "hashtable.h"
+#include <dirent.h>
+
+void	hash_addfile(t_hash *hash, char *path)
+{
+	struct dirent	*dp;
+	DIR				*dirp;
+	char			file[BUFF_SZ + 1];
+
+	dirp = opendir(path);
+	if (dirp == NULL)
+		return ;
+	while ((dp = readdir(dirp)) != NULL)
+	{
+		if (ft_strcmp(dp->d_name, ".") != 0 &&
+				ft_strcmp(dp->d_name, "..") != 0 &&
+				dp->d_type == DT_REG)
+		{
+			ft_strncpy(file, path, BUFF_SZ);
+			ft_strlcat(file, dp->d_name, BUFF_SZ);
+			hash_insert(hash, dp->d_name, file);
+		}
+	}
+	closedir(dirp);
+}
+
+void	hash_createfile(t_env *env)
+{
+	char	full[BUFF_SZ + 1];
+	char	*path;
+	char	*p;
+	t_env	*env_path;
+	t_hash	*hash;
+
+	hash = hash_new();
+	env_path = env_getname(env, "PATH");
+	if (env_path == NULL)
+		return ;
+	path = env_path->content + 5;
+	while (*path)
+	{
+		p = create_path(full, path, "");
+		hash_addfile(hash, full);
+		if (p == NULL)
+			break ;
+		path = p + 1;
+	}
+/*	{
+		for (int i = 0; i < SZHASH; i++)
+		{
+			t_hash *tmp = hash + i;
+			if (tmp->cmd[0] != '\0')
+			{
+				printf("----> %d\n", i);
+				while (tmp)
+				{
+					printf(" %s | %s\n", tmp->cmd, tmp->fullpath);
+					tmp = tmp->next;
+				}
+			}
+		}
+	}*/
+}
+
 t_env	*create_env_environ(void)
 {
 	extern char		**environ;
@@ -83,6 +147,7 @@ t_env	*create_env_environ(void)
 		env = ft_setenv_byname(env, s);
 	}
 	env = set_shlvl(env);
+	hash_createfile(env);
 	return (env);
 }
 

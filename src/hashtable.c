@@ -6,23 +6,14 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/02 08:53:14 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 10:14:50 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 11:34:28 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "hashtable.h"
-#include "parser.h"
+#include "lexer.h"
 #include "xmalloc.h"
-
-# define SZHASH 97
-
-typedef struct	s_hash
-{
-	unsigned		key;
-	char			cmd[BUFF_SZ + 1];
-	char			fullpath[BUFF_SZ + 1];
-	struct s_hash	*next;
-}				t_hash;
 
 t_hash	*hash_new(void)
 {
@@ -43,11 +34,11 @@ void	hash_del(t_hash *hash)
 	i = 0;
 	while (i < SZHASH)
 	{
-		while (hash[i] != NULL)
+		while (hash[i].next != NULL)
 		{
-			tmp = hash[i]->next;
-			free(hash[i]);
-			hash[i] = tmp;
+			tmp = hash[i].next->next;
+			free(hash[i].next);
+			hash[i].next = tmp;
 		}
 		i++;
 	}
@@ -73,7 +64,7 @@ t_hash	*hash_exist(t_hash *hash, char *cmd)
 	t_hash		*tmp;
 
 	key = hash_key(cmd);
-	tmp = hash[key];
+	tmp = hash + key;
 	while (tmp != NULL && tmp->key != key && ft_strcmp(tmp->cmd, cmd) != 0)
 		tmp = tmp->next;
 	return (tmp);
@@ -86,8 +77,8 @@ t_hash	*hash_insert(t_hash *hash, char *cmd, char *fullpath)
 	t_hash		*new;
 
 	key = hash_key(cmd);
-	tmp = hash[key];
-	while (tmp->key != key && tmp->cmd[0] != '\0' && tmp->next != NULL)
+	tmp = hash + key;
+	while (tmp->next != NULL)
 		tmp = tmp->next;
 	if (tmp->cmd[0] != '\0')
 	{

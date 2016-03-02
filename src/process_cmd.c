@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 10:19:09 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 11:27:23 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,16 +86,14 @@ int		have_permission(char *cmd)
 	eprintf("%s: %s\n", cmd, g_error[g_errno]);
 	return (0);
 }
-#include "hashtable.h"
+
 int		is_pathsearch(char *s, t_env *env)
 {
 	t_env	*env_path;
 	char	*path;
 	char	*p;
 	char	file[BUFF_SZ + 1];
-	t_hash	*hash;
 
-	hash = hash_new();
 	path = "./";
 	env_path = env_getname(env, "PATH");
 	if (env_path != NULL)
@@ -107,16 +105,12 @@ int		is_pathsearch(char *s, t_env *env)
 			return (0);
 		if (access(file, X_OK) == 0)
 		{
-			hash_insert(hash, s, file);
 			ft_strcpy(s, file);
-//			return (1);
+			return (1);
 		}
 		if (p == NULL)
 			break ;
 		path = p + 1;
-	}
-	{
-		for (int i = 0; i < S
 	}
 	return (0);
 }
