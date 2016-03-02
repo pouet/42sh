@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:56:04 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 11:21:27 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 09:56:35 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	set_terms(void)
 	new.c_cc[VTIME] = 0;
 	new.c_cc[VMIN] = 1;
 	tcsetattr(0, TCSANOW, &new);
-	set_tty_fd();
+//	set_tty_fd();
 	ft_tputs(SKEYPAD);
 	ft_tputs(CURVI);
 }
@@ -83,5 +83,5 @@ void	unset_terms(void)
 {
 	ft_tputs(UKEYPAD);
 	tcsetattr(0, TCSANOW, &g_old);
-	close_tty_fd();
+//	close_tty_fd();
 }

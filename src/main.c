@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 15:56:35 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/02 10:00:55 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,9 @@ void	mainloop(void)
 			if (tree != NULL)
 			{
 				expand_all(tree, env);
+				unset_terms();
 				process_cmd(tree, env, env);
+				set_terms();
 			}
 		}
 	}
