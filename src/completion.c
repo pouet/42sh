@@ -158,9 +158,43 @@ int		cmd_completion(t_line *l, t_env *env, char *s, int len)
 	return (0);
 }
 
+#include "expand.h"
+#include "parser.h"
+#include "lexer.h"
+
+int		path_count(t_line *l, char *path, char *file)
+{
+	DIR				*dirp;
+	struct dirent	*dp;
+	int				n;
+
+	dirp = opendir(path);
+	if (dirp == NULL)
+		return (0);
+	n = 0;
+	while ((dp = readdir(dirp)) != NULL)
+	{
+	}
+	return (n);
+}
 
 int		path_completion(t_line *l, t_env *env, char *s, int len)
 {
+	t_tree	tree;
+	t_token	token;
+	char	*t;
+
+	tree.type = T_NAME;
+	tree.token = &token;
+	tree.token->sym = S_IDENT;
+	ft_strncpy(token.s, s, len);
+	token.s[len] = '\0';
+	expand_tilde(&tree, env);
+	t = token.s + ft_strlen(token.s);
+	while (t > token.s && *t != '/')
+		t--;
+	if (t != token.s && *t == '/')
+		*t++ = '\0';
 }
 
 int		completion(t_line *l, t_env *env)
@@ -169,7 +203,7 @@ int		completion(t_line *l, t_env *env)
 	int		len;
 
 	s = l->s + l->i - 1;
-	while (s > l->s && ft_isalnum(*s))
+	while (s > l->s && (ft_isalnum(*s) || *s == '~' || *s == '/'))
 		s--;
 	if (s != l->s)
 		s++;
@@ -177,5 +211,6 @@ int		completion(t_line *l, t_env *env)
 //	printf("%d - %s - %d\n", len, s, is_firstword(l, s));
 	if (is_firstword(l, s))
 		return (cmd_completion(l, env, s, len));
-	return (0);
+	else
+		return (path_completion(l, env, s, len));
 }
