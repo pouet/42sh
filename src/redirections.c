@@ -20,6 +20,7 @@
 #include "parser.h"
 #include "error.h"
 #include "read_line.h"
+#include "initterms.h"
 
 int		get_nbr(char *s, char **t)
 {
@@ -101,12 +102,13 @@ int		heredoc(t_symbol sym, char *redir, char *word)
 	char	*t;
 	char	*tmp;
 
+	set_terms();
 	(void)sym;
 	(void)redir;
 	s = ft_strnew(1);
 	while (1)
 	{
-		t = read_line(">> ", NULL);
+		t = read_line(">> ", NULL, NULL);
 		if (t == NULL || ft_strcmp(t, word) == 0)
 			break ;
 		tmp = ft_strjoin(s, t);
@@ -115,6 +117,7 @@ int		heredoc(t_symbol sym, char *redir, char *word)
 		s = ft_strjoin(tmp, "\n");
 		free(tmp);
 	}
+	unset_terms();
 	pipe(fd);
 	write(fd[1], s, ft_strlen(s));
 	free(s);

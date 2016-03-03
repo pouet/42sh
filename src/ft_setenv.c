@@ -46,10 +46,11 @@ t_env	*ft_setenv_byname(t_env *env, char *name_value)
 	else
 		ft_strncpy(tmp->content, name_value, BUFF_SZ);
 	if (ft_strncmp(name_value, "PATH=", 5) == 0)
-	{
+		hash_update(env);
+/*	{
 		hash_del(env->content);
 		env->content = hash_createfile(env);
-	}
+	}*/
 	return (env);
 }
 
@@ -100,10 +101,11 @@ t_env	*ft_unsetenv_byname(t_env *env, char *name)
 	free(tmp->content);
 	free(tmp);
 	if (ft_strcmp(name, "PATH") == 0)
-	{
+		hash_update(env);
+/*	{
 		hash_del(env->content);
 		env->content = hash_createfile(env);
-	}
+	}*/
 	return (env);
 }
 

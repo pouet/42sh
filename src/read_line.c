@@ -22,6 +22,7 @@
 #include "print.h"
 #include "history.h"
 #include "clipboard.h"
+#include "completion.h"
 
 t_line	*new_line(void)
 {
@@ -388,7 +389,7 @@ void	sigint_line(int sig)
 	signal(SIGINT, SIG_IGN);
 }
 
-char	*read_line(char *prompt, t_history *h)
+char	*read_line(char *prompt, t_history *h, t_env *env)
 {
 	t_line			*l;
 	int				ret;
@@ -422,8 +423,17 @@ char	*read_line(char *prompt, t_history *h)
 //		l->lig = ws.ws_row;
 		l->wincol = tgetnum("co");
 		l->winrow = tgetnum("li");
+		if (ev.type == T_ALPHA && ev.c == '\t')
+		{
+			if (completion(l, env))
+			{
+				ft_putstr(prompt);
+				ft_putstr(l->s);
+				movecur_backtoi(l);
+			}
+		}
 		clrscr_down(l);
-		if (ev.type == T_ALPHA)
+		if (ev.type == T_ALPHA && ev.c != '\t')
 		{
 			add_char(l, ev.c);
 			print_line(l, prompt);

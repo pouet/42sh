@@ -70,8 +70,8 @@ int			getevents(t_events *ev)
 	i = 0;
 	while (i < K_NKEYS)
 	{
-		if (keys[i] == NULL)
-			printf("keys[%d]: NULL\n", i);
+//		if (keys[i] == NULL)
+//			printf("keys[%d]: NULL\n", i);
 		if (ft_strcmp(buf, keys[i]) == 0)
 		{
 			ev->type = T_KEYS;
@@ -80,7 +80,7 @@ int			getevents(t_events *ev)
 		}
 		i++;
 	}
-	if (ret == 1 && (ft_isprint(buf[0]) || buf[0] == '\n'))
+	if (ret == 1 && (ft_isprint(buf[0]) || buf[0] == '\n' || buf[0] == '\t'))
 	{
 		ev->type = T_ALPHA;
 		ev->c = buf[0];

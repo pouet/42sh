@@ -103,7 +103,7 @@ void	getbraces(char *s, t_fifo *fifo)
 	}
 }
 
-char	*getline(t_history *h)
+char	*getline(t_history *h, t_env *env)
 {
 	char	prompt[BUFF_SZ + 1];
 	t_fifo	fifo;
@@ -116,7 +116,7 @@ char	*getline(t_history *h)
 	getprompt(prompt, BUFF_SZ);
 	while (s == NULL || (s != NULL && fifo.i != 0))
 	{
-		t = read_line(prompt, h);
+		t = read_line(prompt, h, env);
 		if (t == NULL)
 		{
 			free(s);
@@ -161,7 +161,7 @@ void	mainloop(void)
 	while (42)
 	{
 //		s = read_line(&h);
-		s = getline(&h);
+		s = getline(&h, env);
 		if (s == NULL)
 			break ;
 //		printf("[%s]\n", s);

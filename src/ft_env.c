@@ -120,9 +120,28 @@ t_hash		*hash_createfile(t_env *env)
 			}
 		}
 	}*/
+/*	{
+		t_hash *tmp = hash + SZHASH;
+		tmp = tmp->next;
+		int i = 0;
+		while (tmp)
+		{
+			i++;
+			puts(tmp->cmd);
+			tmp = tmp->next;
+		}
+		printf("%d\n", i);
+	}*/
 	return (hash);
 }
 
+/* TODO: a ameliorer... */
+t_hash		*hash_update(t_env *env)
+{
+	hash_del(env->content);
+	env->content = hash_createfile(env);
+	return (env->content);
+}
 t_env	*create_env_environ(void)
 {
 	extern char		**environ;

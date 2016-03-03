@@ -25,5 +25,6 @@ t_env	*create_env_environ(void);
 t_env	*env_getname(t_env *env, char *name);
 char	**env_totab(t_env *env);
 t_hash		*hash_createfile(t_env *env);
+t_hash		*hash_update(t_env *env);
 
 #endif

@@ -13,7 +13,7 @@
 SRC_NAME = $(sort main.c lexer.c parser.c ft_env.c expand.c error.c\
 		   process_cmd.c get_opts.c ft_setenv.c ft_cd.c ft_exit.c\
 		   redirections.c events.c xmalloc.c colors.c initterms.c tty.c\
-		   print.c read_line.c history.c clipboard.c)
+		   print.c read_line.c history.c clipboard.c hashtable.c completion.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 LIBFT_PATH = ./libft/

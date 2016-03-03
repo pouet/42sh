@@ -104,9 +104,11 @@ int		is_pathsearch(char *s, t_env *env)
 		printf("%s - %s\n", hash->cmd, hash->fullpath);*/
 	if (hash == NULL || access(hash->fullpath, X_OK) != 0)
 	{
-		free(env->content);
-		env->content = hash_createfile(env);
-		return (is_pathsearch(s, env));
+		hash_update(env);
+	hash = hash_exist(env->content, s);
+/*		free(env->content);
+		env->content = hash_createfile(env);*/
+//		return (is_pathsearch(s, env));
 	}
 	if (hash != NULL && access(hash->fullpath, X_OK) == 0)
 	{
@@ -243,11 +245,11 @@ int		checkstatus(int stat_loc)
 
 	if (WIFEXITED(stat_loc))
 		return (WEXITSTATUS(stat_loc));
-	if (WIFSIGNALED(stat_loc))
+	if (WIFSIGNALED(stat_loc) && WCOREDUMP(stat_loc))
 	{
 		sig = WTERMSIG(stat_loc);
 		if (sig > 0 && sig < N_SIG)
-			eprintf("%s", g_ssig[sig]);
+			eprintf("%s: %d", g_ssig[sig], sig);
 		return (sig);
 	}
 	return (0);

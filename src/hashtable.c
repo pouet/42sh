@@ -19,8 +19,8 @@ t_hash	*hash_new(void)
 {
 	t_hash	*hash;
 
-	hash = xmalloc(SZHASH * sizeof(*hash));
-	ft_bzero(hash, SZHASH * sizeof(*hash));
+	hash = xmalloc((SZHASH + 1) * sizeof(*hash));
+	ft_bzero(hash, (SZHASH + 1) * sizeof(*hash));
 	return (hash);
 }
 
@@ -70,6 +70,29 @@ t_hash	*hash_exist(t_hash *hash, char *cmd)
 	return (tmp);
 }
 
+t_hash	*hash_nameupdate(t_hash *hash, char *cmd)
+{
+	t_hash	*new;
+	t_hash	*tmp;
+
+	tmp = hash + SZHASH;
+	while (tmp->next != NULL && ft_strcmp(tmp->next->cmd, cmd) < 0)
+		tmp = tmp->next;
+	if (tmp->next != NULL && ft_strcmp(tmp->next->cmd, cmd) == 0)
+		return (hash);
+	new = xmalloc(sizeof(*new));
+	ft_bzero(new, sizeof(*new));
+	ft_strcpy(new->cmd, cmd);
+	if (tmp->next == NULL)
+		tmp->next = new;
+	else
+	{
+		new->next = tmp->next;
+		tmp->next = new;
+	}
+	return (hash);
+}
+
 t_hash	*hash_insert(t_hash *hash, char *cmd, char *fullpath)
 {
 	unsigned	key;
@@ -90,5 +113,6 @@ t_hash	*hash_insert(t_hash *hash, char *cmd, char *fullpath)
 	tmp->key = key;
 	ft_strlcat(tmp->cmd, cmd, BUFF_SZ);
 	ft_strlcat(tmp->fullpath, fullpath, BUFF_SZ);
+	hash_nameupdate(hash, cmd);
 	return (hash);
 }

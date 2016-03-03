@@ -13,6 +13,8 @@
 #ifndef READ_LINE_H
 # define READ_LINE_H
 
+# include "ft_env.h"
+
 typedef struct	s_line
 {
 	char			*s;
@@ -37,7 +39,8 @@ typedef struct		s_history
 	t_node			*new;
 }					t_history;
 
-char	*read_line(char *prompt, t_history *h);
+char	*read_line(char *prompt, t_history *h, t_env *env);
 t_line	*growup_line(t_line *l);
+char	*add_char(t_line *l, char c);
 
 #endif
