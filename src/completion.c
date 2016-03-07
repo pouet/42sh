@@ -158,24 +158,67 @@ int		cmd_completion(t_line *l, t_env *env, char *s, int len)
 	return (0);
 }
 
+#include <dirent.h>
 #include "expand.h"
 #include "parser.h"
 #include "lexer.h"
 
-int		path_count(t_line *l, char *path, char *file)
+int		path_count(t_line *l, char *path, char *file, char *res)
 {
 	DIR				*dirp;
 	struct dirent	*dp;
 	int				n;
+	int				len;
 
 	dirp = opendir(path);
 	if (dirp == NULL)
 		return (0);
 	n = 0;
+	len = ft_strlen(file);
 	while ((dp = readdir(dirp)) != NULL)
 	{
+		if (ft_strncmp(dp->d_name, file, len) == 0)
+		{
+			ft_strcpy(res, dp->d_name);
+			n++;
+		}
 	}
+	closedir(dirp);
 	return (n);
+}
+
+int		path_complete(t_line *l, char *s, int len)
+{
+	while (s[len])
+	{
+		add_char(l, s[len]);
+		len++;
+	}
+	return (0);
+}
+
+int		path_multiple(t_line *l, char *path, char *file)
+{
+	DIR				*dirp;
+	struct dirent	*dp;
+	int				n;
+	int				len;
+
+	dirp = opendir(path);
+	if (dirp == NULL)
+		return (0);
+	puts("");
+	n = 0;
+	len = ft_strlen(file);
+	while ((dp = readdir(dirp)) != NULL)
+	{
+		if (ft_strncmp(dp->d_name, file, len) == 0)
+		{
+			puts(dp->d_name);
+		}
+	}
+	closedir(dirp);
+	return (0);
 }
 
 int		path_completion(t_line *l, t_env *env, char *s, int len)
@@ -183,6 +226,8 @@ int		path_completion(t_line *l, t_env *env, char *s, int len)
 	t_tree	tree;
 	t_token	token;
 	char	*t;
+	char	res[BUFF_SZ + 1];
+	int		npath;
 
 	tree.type = T_NAME;
 	tree.token = &token;
@@ -190,11 +235,29 @@ int		path_completion(t_line *l, t_env *env, char *s, int len)
 	ft_strncpy(token.s, s, len);
 	token.s[len] = '\0';
 	expand_tilde(&tree, env);
+	if (token.s[0] != '/')
+	{
+		getcwd(token.s, BUFF_SZ);
+		ft_strlcat(token.s, "/", BUFF_SZ);
+		ft_strlcat(token.s, s, BUFF_SZ);
+	}
 	t = token.s + ft_strlen(token.s);
 	while (t > token.s && *t != '/')
 		t--;
-	if (t != token.s && *t == '/')
+	if (t == token.s && *t == '/')
+	{
+		ft_memmove(token.s + 1, token.s, ft_strlen(token.s) + 1);
+		token.s[1] = '\0';
+		t = token.s + 2;
+	}
+	else if (t != token.s && *t == '/')
 		*t++ = '\0';
+	npath = path_count(l, token.s, t, res);
+	if (npath == 1)
+		return (path_complete(l, res, ft_strlen(t)));
+	else if (npath > 1)
+		return (path_multiple(l, token.s, t));
+	return (0);
 }
 
 int		completion(t_line *l, t_env *env)
