@@ -35,7 +35,7 @@ int		init_term(void)
 	char	bp;
 
 	term = getenv("TERM");
-	if (term == NULL || term[0] == '\0')
+	if (term == NULL || term[5] == '\0')
 		term = "TERM=xterm-256color";
 	if (tgetent(&bp, term) == ERR)
 	{

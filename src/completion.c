@@ -207,14 +207,16 @@ int		path_multiple(t_line *l, char *path, char *file)
 	dirp = opendir(path);
 	if (dirp == NULL)
 		return (0);
-	puts("");
+	ft_putendl("");
+//	puts("");
 	n = 0;
 	len = ft_strlen(file);
 	while ((dp = readdir(dirp)) != NULL)
 	{
 		if (ft_strncmp(dp->d_name, file, len) == 0)
 		{
-			puts(dp->d_name);
+			ft_putendl(dp->d_name);
+//			puts(dp->d_name);
 		}
 	}
 	closedir(dirp);
@@ -266,13 +268,16 @@ int		completion(t_line *l, t_env *env)
 	int		len;
 
 	s = l->s + l->i - 1;
-	while (s > l->s && (ft_isalnum(*s) || *s == '~' || *s == '/'))
+	while (s > l->s && (*s != ' ' && *s != ';' && *s != '|' && *s != '&' &&
+		*s != '>' && *s != '<' && *s != '(' && *s != ')'))// (ft_isalnum(*s) || *s == '~' || *s == '/'))
+//	while (s > l->s && (ft_isalnum(*s) || *s == '~' || *s == '/'))
 		s--;
 	if (s != l->s)
 		s++;
 	len = (l->s + l->i) - s;
 //	printf("%d - %s - %d\n", len, s, is_firstword(l, s));
-	if (is_firstword(l, s))
+	if (is_firstword(l, s) && ft_strncmp(s, "./", 2) != 0
+			&& ft_strncmp(s, "../", 3) != 0)
 		return (cmd_completion(l, env, s, len));
 	else
 		return (path_completion(l, env, s, len));
