@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 12:20:47 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:27:41 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:15:58 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int		del_dotslash(char *s, int len)
 		len = del_multipleslash(s, len);
 		len = del_finalslash(s, len);
 		t = get_nextid(s + i, name);
-		if (ft_strcmp(name, ".") == 0)
+		if (ft_strcmp(name, ".") == 0 && i > 0)
 		{
 			ft_strcpy(s + i, t);
 			len--;

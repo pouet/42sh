@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 14:21:48 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:23:19 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:21:45 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <sys/wait.h>
 #include "error.h"
 #include "process_cmd.h"
+#include "ft_env.h"
+#include "parser.h"
 
 void	child_pipe(t_tree *tree, t_env *env, t_env *new, int fd_pipe[2])
 {
