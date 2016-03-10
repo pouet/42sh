@@ -6,14 +6,13 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 12:03:43 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/23 10:08:58 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 09:03:24 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <term.h>
 #include "libft.h"
 #include "print.h"
-#include "tty.h"
 
 int		ft_putchar_tty(int c)
 {

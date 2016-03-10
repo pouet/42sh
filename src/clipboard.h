@@ -6,16 +6,16 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/25 10:46:35 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 11:16:15 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:28:57 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIPBOARD_H
 # define CLIPBOARD_H
 
-#include "read_line.h"
+# include "read_line.h"
 
-enum e_clipboard
+enum	e_clipboard
 {
 	C_CUTEND,
 	C_CUTBEG,

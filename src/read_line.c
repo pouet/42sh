@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/01 09:14:45 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 09:28:58 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include "clipboard.h"
 #include "completion.h"
 
-t_line	*new_line(void)
+t_line	*new_line(int lenp)
 {
 	t_line	*l;
 
@@ -34,6 +34,13 @@ t_line	*new_line(void)
 	l->lenmax = BUFF_SZ;
 	l->s = xmalloc((l->lenmax + 1) * sizeof(*l->s));
 	ft_bzero(l->s, l->lenmax + 1);
+	l->lenprompt = lenp;
+	l->col = l->lenprompt;
+	l->row = 0;
+	l->oldcol = l->col;
+	l->oldrow = l->row;
+	l->curcol = l->col;
+	l->currow = l->row;
 	return (l);
 }
 
@@ -373,7 +380,7 @@ void	histo_key(t_history *h, t_line *l, int move)
 	while (l->i < l->len)
 		movelr(l, K_RIGHT);
 }
-
+/*
 #include <sys/ioctl.h>
 #include <signal.h>
 static int	g_sigint_line;
@@ -387,6 +394,59 @@ void	sigint_line(int sig)
 	g_sigint_line = 1;
 	ioctl(0, TIOCSTI, &c);
 	signal(SIGINT, SIG_IGN);
+}*/
+
+int		key(t_line *l, t_history *h, t_events *ev)
+{
+	if (ev->type != T_KEYS)
+		return (0);
+	if (ev->c == K_LEFT || ev->c == K_RIGHT)
+		movelr(l, ev->c);
+	else if (ev->c == K_ALTUP || ev->c == K_ALTDWN)
+		moveupdown(l, ev->c);
+	else if (ev->c == K_ALTLFT || ev->c == K_ALTRGT)
+		moveword(l, ev->c);
+	else if (ev->c == K_DEL || ev->c == K_BCKSP)
+		delchar(l, ev->c);
+	else if (ev->c == K_HOME || ev->c == K_END)
+		move_homeend(l, ev->c);
+	else if (ev->c == K_UP || ev->c == K_DOWN)
+		histo_key(h, l, ev->c);
+	else if (ev->c == K_ALTA || ev->c == K_ALTS || ev->c == K_ALTD ||
+			ev->c == K_ALTZ || ev->c == K_ALTX || ev->c == K_ALTC ||
+			ev->c == K_ALTV)
+		clipboard_key(l, ev->c);
+	else if (ev->c == K_CTRLD)
+	{
+		free(l->s);
+		l->s = NULL;
+		return (1);
+	}
+	return (0);
+}
+
+void	tabulation(t_line *l, t_env *env, t_events *ev, char *prompt)
+{
+	if (ev->type == T_ALPHA && ev->c == '\t')
+	{
+		if (completion(l, env))
+		{
+			ft_putstr(prompt);
+			ft_putstr(l->s);
+			movecur_backtoi(l);
+		}
+	}
+}
+
+int		character(t_line *l, t_events *ev)
+{
+	if (ev->type == T_ALPHA && ev->c != '\t')
+	{
+		add_char(l, ev->c);
+		if (ev->c == '\n')
+			return (1);
+	}
+	return (0);
 }
 
 char	*read_line(char *prompt, t_history *h, t_env *env)
@@ -394,91 +454,25 @@ char	*read_line(char *prompt, t_history *h, t_env *env)
 	t_line			*l;
 	int				ret;
 	t_events		ev;
-//	int				i;
-//	struct winsize	ws;
 
-	signal(SIGINT, sigint_line);
-	g_sigint_line = 0;
-
-//	ft_tputs("sc");
 	ft_putstr(prompt);
-	l = new_line();
-	l->lenprompt = lenprompt(prompt);
-	l->col = l->lenprompt;
-	l->row = 0;
-	l->oldcol = l->col;
-	l->oldrow = l->row;
-	l->curcol = l->col;
-	l->currow = l->row;
-	while ((ret = getevents(&ev)) > 0/* || (ret == 0 && ev.c == '\n')*/)
+	l = new_line(lenprompt(prompt));
+	while ((ret = getevents(&ev)) > 0)
 	{
-		if (g_sigint_line != 0)
+/*		if (g_sigint_line != 0)
 		{
-			/* TODO: a refaire pour le multiligne avec guillemets... */
 			l->s[0] = '\0';
 			break ;
-		}
-//		ioctl(0, TIOCGWINSZ, &ws);
-//		l->col = ws.ws_col;
-//		l->lig = ws.ws_row;
+		}*/
 		l->wincol = tgetnum("co");
 		l->winrow = tgetnum("li");
-		if (ev.type == T_ALPHA && ev.c == '\t')
-		{
-			if (completion(l, env))
-			{
-				ft_putstr(prompt);
-				ft_putstr(l->s);
-				movecur_backtoi(l);
-			}
-		}
+		tabulation(l, env, &ev, prompt);
 		clrscr_down(l);
-		if (ev.type == T_ALPHA && ev.c != '\t')
-		{
-			add_char(l, ev.c);
-			print_line(l, prompt);
-//			print_char(ev.c);
-			if (ev.c == '\n')
-			{
-//				i = 0;
-//				while (i < l->row)
-//				{
-//					ft_putendl("");
-//					i++;
-//				}
-				break ;
-			}
-		}
-		else
-		{
-			if (ev.c == K_LEFT || ev.c == K_RIGHT)
-				movelr(l, ev.c);
-			else if (ev.c == K_ALTUP || ev.c == K_ALTDWN)
-				moveupdown(l, ev.c);
-			else if (ev.c == K_ALTLFT || ev.c == K_ALTRGT)
-				moveword(l, ev.c);
-			else if (ev.c == K_DEL || ev.c == K_BCKSP)
-				delchar(l, ev.c);
-			else if (ev.c == K_HOME || ev.c == K_END)
-				move_homeend(l, ev.c);
-			else if (ev.c == K_UP || ev.c == K_DOWN)
-				histo_key(h, l, ev.c);
-			else if (ev.c == K_ALTA || ev.c == K_ALTS || ev.c == K_ALTD ||
-					ev.c == K_ALTZ || ev.c == K_ALTX || ev.c == K_ALTC ||
-					ev.c == K_ALTV)
-				clipboard_key(l, ev.c);
-			else if (ev.c == K_CTRLD)
-			{
-				free(l->s);
-				l->s = NULL;
-				break ;
-				/* free t_line */
-//				return (NULL);
-			}
-			print_line(l, prompt);
-		}
+		if (character(l, &ev, prompt) != 0 || key(l, h, &ev, prompt) != 0)
+			break ;
+		print_line(l, prompt);
 	}
-	signal(SIGINT, SIG_IGN);
+	print_line(l, prompt);
 	ft_putendl("");
 	return (linetos(l));
 }

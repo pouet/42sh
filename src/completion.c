@@ -1,3 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   completion.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/03/10 08:29:18 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/03/10 09:28:12 by nchrupal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <dirent.h>
+#include <unistd.h>
+#include "expand.h"
+#include "parser.h"
+#include "lexer.h"
+#include "ft_printf.h"
 #include "libft.h"
 #include "completion.h"
 #include "print.h"
@@ -40,10 +58,8 @@ int		cmd_count(t_hash *hash, char *s, int len)
 	while (hash && ft_strncmp(hash->cmd, s, len) == 0)
 	{
 		n++;
-//		puts(hash->cmd);
 		hash = hash->next;
 	}
-//	printf("%d\n", n);
 	return (n);
 }
 
@@ -76,9 +92,6 @@ int		cmd_lenmax(t_hash *hash, int ncmd)
 	return (lenmax);
 }
 
-#include <unistd.h>
-#include "ft_printf.h"
-
 void	print_cmd(t_line *l, t_hash *hash, int ncmd, int lenmax)
 {
 	int		len;
@@ -89,7 +102,6 @@ void	print_cmd(t_line *l, t_hash *hash, int ncmd, int lenmax)
 
 	col = l->wincol / (lenmax + 1);
 	wid = l->wincol / col;
-//	printf("%d - %d - %d - %d - %d\n", ncmd, lenmax, l->wincol, col, wid);
 	j = 0;
 	while (j < ncmd)
 	{
@@ -111,7 +123,6 @@ void	print_cmd(t_line *l, t_hash *hash, int ncmd, int lenmax)
 
 int		cmd_multiple(t_line *l, t_hash *hash, int ncmd)
 {
-//	int		lenmax;
 	char	c;
 
 	movecur_last(l);
@@ -124,9 +135,7 @@ int		cmd_multiple(t_line *l, t_hash *hash, int ncmd)
 		if (c == 'n')
 			return (0);
 	}
-//	lenmax = cmd_lenmax(hash, ncmd);
 	print_cmd(l, hash, ncmd, cmd_lenmax(hash, ncmd));
-
 	return (1);
 }
 
@@ -157,11 +166,6 @@ int		cmd_completion(t_line *l, t_env *env, char *s, int len)
 	}
 	return (0);
 }
-
-#include <dirent.h>
-#include "expand.h"
-#include "parser.h"
-#include "lexer.h"
 
 int		path_count(t_line *l, char *path, char *file, char *res)
 {
@@ -208,7 +212,6 @@ int		path_multiple(t_line *l, char *path, char *file)
 	if (dirp == NULL)
 		return (0);
 	ft_putendl("");
-//	puts("");
 	n = 0;
 	len = ft_strlen(file);
 	while ((dp = readdir(dirp)) != NULL)
@@ -216,33 +219,38 @@ int		path_multiple(t_line *l, char *path, char *file)
 		if (ft_strncmp(dp->d_name, file, len) == 0)
 		{
 			ft_putendl(dp->d_name);
-//			puts(dp->d_name);
 		}
 	}
 	closedir(dirp);
-	return (0);
+	return (1);
+}
+
+void	path_expand(t_token *token, t_env *env, char *s, int len)
+{
+	t_tree	tree;
+
+	tree.type = T_NAME;
+	tree.token = token;
+	tree.token->sym = S_IDENT;
+	ft_strncpy(token->s, s, len);
+	token->s[len] = '\0';
+	expand_tilde(&tree, env);
+	if (token->s[0] != '/')
+	{
+		getcwd(token->s, BUFF_SZ);
+		ft_strlcat(token->s, "/", BUFF_SZ);
+		ft_strlcat(token->s, s, BUFF_SZ);
+	}
 }
 
 int		path_completion(t_line *l, t_env *env, char *s, int len)
 {
-	t_tree	tree;
 	t_token	token;
 	char	*t;
 	char	res[BUFF_SZ + 1];
 	int		npath;
 
-	tree.type = T_NAME;
-	tree.token = &token;
-	tree.token->sym = S_IDENT;
-	ft_strncpy(token.s, s, len);
-	token.s[len] = '\0';
-	expand_tilde(&tree, env);
-	if (token.s[0] != '/')
-	{
-		getcwd(token.s, BUFF_SZ);
-		ft_strlcat(token.s, "/", BUFF_SZ);
-		ft_strlcat(token.s, s, BUFF_SZ);
-	}
+	path_expand(&token, env, s, len);
 	t = token.s + ft_strlen(token.s);
 	while (t > token.s && *t != '/')
 		t--;
@@ -269,13 +277,11 @@ int		completion(t_line *l, t_env *env)
 
 	s = l->s + l->i - 1;
 	while (s > l->s && (*s != ' ' && *s != ';' && *s != '|' && *s != '&' &&
-		*s != '>' && *s != '<' && *s != '(' && *s != ')'))// (ft_isalnum(*s) || *s == '~' || *s == '/'))
-//	while (s > l->s && (ft_isalnum(*s) || *s == '~' || *s == '/'))
+		*s != '>' && *s != '<' && *s != '(' && *s != ')'))
 		s--;
 	if (s != l->s)
 		s++;
 	len = (l->s + l->i) - s;
-//	printf("%d - %s - %d\n", len, s, is_firstword(l, s));
 	if (is_firstword(l, s) && ft_strncmp(s, "./", 2) != 0
 			&& ft_strncmp(s, "../", 3) != 0)
 		return (cmd_completion(l, env, s, len));

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/25 11:52:07 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 11:03:23 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:42:06 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ enum
 	K_LEFT,
 	K_RIGHT,
 	K_DEL,
-//	K_ENTER,
 	K_BCKSP,
 	K_ESCAP,
 	K_CTRLD,
+	K_CTRLR,
 	K_ALTLFT,
 	K_ALTRGT,
 	K_ALTUP,

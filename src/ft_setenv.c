@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/05 11:12:22 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 14:04:54 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:48:48 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,6 @@ t_env	*ft_setenv_byname(t_env *env, char *name_value)
 		ft_strncpy(tmp->content, name_value, BUFF_SZ);
 	if (ft_strncmp(name_value, "PATH=", 5) == 0)
 		hash_update(env);
-/*	{
-		hash_del(env->content);
-		env->content = hash_createfile(env);
-	}*/
 	return (env);
 }
 
@@ -80,14 +76,12 @@ t_env	*ft_unsetenv_byname(t_env *env, char *name)
 	t_env	*tmp;
 	t_env	*p;
 
-	value = ft_strchr(name, '=');
-	if (value != NULL)
+	if ((value = ft_strchr(name, '=')) != NULL)
 	{
 		eprintf("unsetenv: wrong identifier\n");
 		return (env);
 	}
-	tmp = env_getname(env, name);
-	if (tmp == NULL)
+	if ((tmp = env_getname(env, name)) == NULL)
 	{
 		eprintf("unsetenv: unknown name %s\n", name);
 		return (env);
@@ -102,10 +96,6 @@ t_env	*ft_unsetenv_byname(t_env *env, char *name)
 	free(tmp);
 	if (ft_strcmp(name, "PATH") == 0)
 		hash_update(env);
-/*	{
-		hash_del(env->content);
-		env->content = hash_createfile(env);
-	}*/
 	return (env);
 }
 

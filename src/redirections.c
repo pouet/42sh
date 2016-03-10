@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 12:24:46 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 09:01:40 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ int		redir(t_symbol sym, char *redir, char *word)
 		fd = open(word, O_WRONLY | O_CREAT | O_APPEND,
 			S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 	if (fd < 0)
-		/* TODO: gerer mieux les erreurs */
 		return (eprintf("error: %s: unable to open the file\n", redir));
 	dup2(fd, fd_src);
 	return (0);
@@ -121,10 +120,7 @@ int		heredoc(t_symbol sym, char *redir, char *word)
 	pipe(fd);
 	write(fd[1], s, ft_strlen(s));
 	free(s);
-	close(fd[1]);
-	dup2(fd[0], 0);
-	close(fd[0]);
-	return (0);
+	return (close(fd[1]) < 0 || dup2(fd[0], 0) < 0 || close(fd[0]) < 0);
 }
 
 void	del_redir(t_tree *tree, int start, int end)

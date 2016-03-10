@@ -6,17 +6,17 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:55:07 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 08:43:11 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:54:08 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HISTORY_H
 # define HISTORY_H
 
-#include "libft.h"
-#include "read_line.h"
+# include "libft.h"
+# include "read_line.h"
 
-#define HISTORY_FILE ".42sh_history"
+# define HISTORY_FILE ".42sh_history"
 
 void	histo_load(t_history *h);
 int		histo_add(t_history *h, char *s);

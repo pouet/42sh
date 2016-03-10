@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 14:31:03 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:57:02 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,51 +90,19 @@ int		have_permission(char *cmd)
 
 int		is_pathsearch(char *s, t_env *env)
 {
-//	t_env	*env_path;
-//	char	*path;
-//	char	*p;
-//	char	file[BUFF_SZ + 1];
-
 	t_hash	*hash;
 
 	hash = hash_exist(env->content, s);
-/*	if (hash == NULL)
-		puts("(NULL)");
-	else
-		printf("%s - %s\n", hash->cmd, hash->fullpath);*/
 	if (hash == NULL || access(hash->fullpath, X_OK) != 0)
 	{
 		hash_update(env);
-	hash = hash_exist(env->content, s);
-/*		free(env->content);
-		env->content = hash_createfile(env);*/
-//		return (is_pathsearch(s, env));
+		hash = hash_exist(env->content, s);
 	}
 	if (hash != NULL && access(hash->fullpath, X_OK) == 0)
 	{
 		ft_strncpy(s, hash->fullpath, BUFF_SZ);
 		return (1);
 	}
-
-
-/*	path = "./";
-	env_path = env_getname(env, "PATH");
-	if (env_path != NULL)
-		path = env_path->content + 5;
-	while (*path)
-	{
-		p = create_path(file, path, s);
-		if (have_permission(file) == 0)
-			return (0);
-		if (access(file, X_OK) == 0)
-		{
-			ft_strcpy(s, file);
-			return (1);
-		}
-		if (p == NULL)
-			break ;
-		path = p + 1;
-	}*/
 	return (0);
 }
 
@@ -204,6 +172,7 @@ int		launch_process(t_tree *tree, t_env *env)
 }
 
 #define N_SIG 32
+
 static char		*g_ssig[N_SIG] = {
 	"",
 	"",

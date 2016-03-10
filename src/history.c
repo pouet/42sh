@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:25:01 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/26 08:42:49 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:54:37 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@
 #include "read_line.h"
 #include "print.h"
 
+/*
+** TODO: charger le fichier
+*/
+
 void	histo_load(t_history *h)
 {
-	/* TODO: charger le fichier */
 	h->dll = dll_newlist();
 	h->new = dll_createnode("", 1);
 	h->cur = h->new;

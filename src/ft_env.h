@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 12:07:18 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 14:01:58 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:46:02 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 
 typedef t_list	t_env;
 
-t_env	*env_newelement(char *s);
-t_env	*ft_env(t_env *env, t_tree *tree);
-t_env	*create_env_environ(void);
-t_env	*env_getname(t_env *env, char *name);
-char	**env_totab(t_env *env);
+t_env		*env_newelement(char *s);
+t_env		*ft_env(t_env *env, t_tree *tree);
+t_env		*create_env_environ(void);
+t_env		*env_getname(t_env *env, char *name);
+char		**env_totab(t_env *env);
 t_hash		*hash_createfile(t_env *env);
 t_hash		*hash_update(t_env *env);
 

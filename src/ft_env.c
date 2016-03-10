@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 11:43:42 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 14:09:24 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 08:52:59 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,88 +60,6 @@ t_env	*set_shlvl(t_env *env)
 	return (ft_setenv_byname(env, s));
 }
 
-#include "hashtable.h"
-#include <dirent.h>
-
-void	hash_addfile(t_hash *hash, char *path)
-{
-	struct dirent	*dp;
-	DIR				*dirp;
-	char			file[BUFF_SZ + 1];
-
-	dirp = opendir(path);
-	if (dirp == NULL)
-		return ;
-	while ((dp = readdir(dirp)) != NULL)
-	{
-		ft_strncpy(file, path, BUFF_SZ);
-		ft_strlcat(file, dp->d_name, BUFF_SZ);
-		if (ft_strcmp(dp->d_name, ".") != 0 &&
-				ft_strcmp(dp->d_name, "..") != 0 &&
-				access(file, X_OK) == 0)
-			hash_insert(hash, dp->d_name, file);
-	}
-	closedir(dirp);
-}
-
-t_hash		*hash_createfile(t_env *env)
-{
-	char	full[BUFF_SZ + 1];
-	char	*path;
-	char	*p;
-	t_env	*env_path;
-	t_hash	*hash;
-
-	hash = hash_new();
-	env_path = env_getname(env, "PATH");
-	if (env_path == NULL)
-		return (hash);
-	path = env_path->content + 5;
-	while (*path)
-	{
-		p = create_path(full, path, "");
-		hash_addfile(hash, full);
-		if (p == NULL)
-			break ;
-		path = p + 1;
-	}
-/*	{
-		for (int i = 0; i < SZHASH; i++)
-		{
-			t_hash *tmp = hash + i;
-			if (tmp->cmd[0] != '\0')
-			{
-				printf("----> %d\n", i);
-				while (tmp)
-				{
-					printf(" %s | %s\n", tmp->cmd, tmp->fullpath);
-					tmp = tmp->next;
-				}
-			}
-		}
-	}*/
-/*	{
-		t_hash *tmp = hash + SZHASH;
-		tmp = tmp->next;
-		int i = 0;
-		while (tmp)
-		{
-			i++;
-			puts(tmp->cmd);
-			tmp = tmp->next;
-		}
-		printf("%d\n", i);
-	}*/
-	return (hash);
-}
-
-/* TODO: a ameliorer... */
-t_hash		*hash_update(t_env *env)
-{
-	hash_del(env->content);
-	env->content = hash_createfile(env);
-	return (env->content);
-}
 t_env	*create_env_environ(void)
 {
 	extern char		**environ;
@@ -168,15 +86,12 @@ t_env	*create_env_environ(void)
 	env->content = hash_createfile(env);
 	return (env);
 }
-//#include "xmalloc.h"
+
 t_env	*dup_env(t_env *env)
 {
 	t_env			*dup;
 
 	dup = NULL;
-//	dup = env_newelement("");
-//	free(dup->content);
-//	dup->content = env->content;
 	while (env)
 	{
 		dup = ft_lstpushback(dup, env_newelement(env->content));
