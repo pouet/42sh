@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:29:39 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:01:20 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static char		*g_ssig[N_SIG] = {
 	"SIGTRAP: trace trap\n",
 	"SIGABRT: abort program\n",
 	"SIGEMT: emulate instruction executed\n",
-	"SIGFPE: floating-point exception\n",
+	"",
 	"",
 	"SIGBUS: bus error\n",
 	"SIGSEGV: segmentation fault\n",
@@ -100,7 +100,7 @@ int		checkstatus(int stat_loc)
 	{
 		sig = WTERMSIG(stat_loc);
 		if (sig > 0 && sig < N_SIG)
-			eprintf("%s: %d", g_ssig[sig], sig);
+			eprintf("%s", g_ssig[sig]);
 		return (sig);
 	}
 	return (0);

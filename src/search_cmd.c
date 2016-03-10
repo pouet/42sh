@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 14:25:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:27:40 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:04:06 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,26 @@ char	*create_path(char *file, char *path, char *s)
 	return (p);
 }
 
+int		have_permission(char *cmd)
+{
+	struct stat	buf;
+	uid_t		uid;
+	gid_t		gid;
+
+	uid = getuid();
+	gid = getgid();
+	if (stat(cmd, &buf) < 0)
+		return (-1);
+	if (((buf.st_uid == uid && (buf.st_mode & S_IXUSR)) ||
+			(buf.st_gid == gid && (buf.st_mode & S_IXGRP)) ||
+			(buf.st_mode & S_IXOTH)) &&
+		((buf.st_mode & S_IFMT) == S_IFREG))
+		return (1);
+	g_errno = E_PERMISSION;
+	eprintf("%s: %s\n", cmd, g_error[g_errno]);
+	return (0);
+}
+
 int		is_pathsearch(char *s, t_env *env)
 {
 	t_hash	*hash;
@@ -75,7 +95,8 @@ int		is_pathsearch(char *s, t_env *env)
 		hash_update(env);
 		hash = hash_exist(env->content, s);
 	}
-	if (hash != NULL && access(hash->fullpath, X_OK) == 0)
+	if (hash != NULL && have_permission(hash->fullpath) &&
+			access(hash->fullpath, X_OK) == 0)
 	{
 		ft_strncpy(s, hash->fullpath, BUFF_SZ);
 		return (1);
@@ -92,7 +113,7 @@ int		find_cmd(t_token *token, t_env *env)
 		return (0);
 	if (ft_strchr(token->s, '/'))
 	{
-		if (access(token->s, X_OK) != 0)
+		if (have_permission(token->s) == 0 || access(token->s, X_OK) != 0)
 			return (0);
 		token->sym = S_COMMAND;
 	}
