@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 14:08:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:14:08 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:35:47 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int			heredoc(t_symbol sym, char *redir, char *word)
 	s = ft_strnew(1);
 	signal(SIGINT, sigint_line);
 	g_sigint_line = 0;
-	while (1)
+	while (g_sigint_line == 0)
 	{
 		t = read_line(">> ", NULL, NULL, &g_sigint_line);
 		if (t == NULL || ft_strcmp(t, word) == 0)
