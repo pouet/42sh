@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/02 10:00:55 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 11:23:18 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ void	getbraces(char *s, t_fifo *fifo)
 			index = t - g_corr;
 			if (fifo->i > 0 && index < 6 && *s == fifo->t[fifo->i - 1])
 				index++;
-//			printf("%d", index);
 			if (index % 2 == 0 && (fifo->i == 0 || (fifo->i > 0 &&
 				fifo->t[fifo->i - 1] != '"' && fifo->t[fifo->i - 1] != '\'' &&
 				fifo->t[fifo->i] != '`')))
@@ -103,53 +102,78 @@ void	getbraces(char *s, t_fifo *fifo)
 	}
 }
 
+#include <sys/ioctl.h>
+#include <signal.h>
+
+static int	g_sigint_line;
+
+static void	sigint_line(int sig)
+{
+	char	c;
+
+	(void)sig;
+	c = '\n';
+	g_sigint_line = 1;
+	ioctl(0, TIOCSTI, &c);
+	signal(SIGINT, SIG_IGN);
+}
+
+char	*addline(t_history *h, char *prompt, char *s, char *t)
+{
+	char	*tmp;
+
+	if (s == NULL)
+	{
+		s = t;
+		histo_add(h, s);
+		ft_strcpy(prompt, " > ");
+	}
+	else
+	{
+		tmp = xmalloc((ft_strlen(s) + ft_strlen(t) + 2) * sizeof(*tmp));
+		ft_strcpy(tmp, s);
+		ft_strcat(tmp, "\n");
+		ft_strcat(tmp, t);
+		free(s);
+		free(t);
+		s = tmp;
+		free(h->dll->first->data);
+		h->dll->first->data = ft_strdup(s);
+	}
+	return (s);
+}
+
 char	*getline(t_history *h, t_env *env)
 {
 	char	prompt[BUFF_SZ + 1];
 	t_fifo	fifo;
 	char	*s;
 	char	*t;
-	char	*tmp;
 
 	s = NULL;
 	ft_bzero(&fifo, sizeof(fifo));
 	getprompt(prompt, BUFF_SZ);
-	while (s == NULL || (s != NULL && fifo.i != 0))
+	signal(SIGINT, sigint_line);
+	g_sigint_line = 0;
+	while (g_sigint_line == 0 && (s == NULL || (s != NULL && fifo.i != 0)))
 	{
-		t = read_line(prompt, h, env);
+		t = read_line(prompt, h, env, &g_sigint_line);
 		if (t == NULL)
 		{
 			free(s);
 			return (NULL);
 		}
 		getbraces(t, &fifo);
-		if (s == NULL)
-		{
-			s = t;
-			histo_add(h, s);
-			ft_strcpy(prompt, " > ");
-		}
-		else
-		{
-			tmp = xmalloc((ft_strlen(s) + ft_strlen(t) + 2) * sizeof(*tmp));
-			ft_strcpy(tmp, s);
-			ft_strcat(tmp, "\n");
-			ft_strcat(tmp, t);
-			free(s);
-			free(t);
-			s = tmp;
-			free(h->dll->first->data);
-			h->dll->first->data = ft_strdup(s);
-		}
-//		printf("[%s][%d]\n", s, fifo.i);
+		s = addline(h, prompt, s, t);
 	}
+	if (g_sigint_line)
+		s[0] = '\0';
+	signal(SIGINT, SIG_IGN);
 	return (s);
 }
 
 void	mainloop(void)
 {
-//	char	s[BUFF_SZ + 1];
-//	int		ret;
 	t_history	h;
 	t_token		*token;
 	t_tree		*tree;
@@ -160,26 +184,16 @@ void	mainloop(void)
 	histo_load(&h);
 	while (42)
 	{
-//		s = read_line(&h);
 		s = getline(&h, env);
 		if (s == NULL)
 			break ;
-//		printf("[%s]\n", s);
-//		ret = read(0, s, BUFF_SZ);
-//		if (ret <= 0)
-//			break ;
-//		s[ret] = '\0';
-		token = lexer(s);
-		if (token != NULL)
+		;
+		if ((token = lexer(s)) != NULL && (tree = parser(token)) != NULL)
 		{
-			tree = parser(token);
-			if (tree != NULL)
-			{
-				expand_all(tree, env);
-				unset_terms();
-				process_cmd(tree, env, env);
-				set_terms();
-			}
+			expand_all(tree, env);
+			unset_terms();
+			process_cmd(tree, env, env);
+			set_terms();
 		}
 	}
 }

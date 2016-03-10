@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 09:48:09 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 11:14:24 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -397,22 +397,6 @@ void	histo_key(t_history *h, t_line *l, int move)
 		movelr(l, K_RIGHT);
 }
 
-/*
-#include <sys/ioctl.h>
-#include <signal.h>
-static int	g_sigint_line;
-
-void	sigint_line(int sig)
-{
-	char	c;
-
-	(void)sig;
-	c = '\n';
-	g_sigint_line = 1;
-	ioctl(0, TIOCSTI, &c);
-	signal(SIGINT, SIG_IGN);
-}*/
-
 int		key(t_line *l, t_history *h, t_events *ev)
 {
 	if (ev->type != T_KEYS)
@@ -466,7 +450,7 @@ int		character(t_line *l, t_events *ev)
 	return (0);
 }
 
-char	*read_line(char *prompt, t_history *h, t_env *env)
+char	*read_line(char *prompt, t_history *h, t_env *env, int *sig)
 {
 	t_line			*l;
 	int				ret;
@@ -476,11 +460,12 @@ char	*read_line(char *prompt, t_history *h, t_env *env)
 	l = new_line(lenprompt(prompt));
 	while ((ret = getevents(&ev)) > 0)
 	{
-/*		if (g_sigint_line != 0)
+		if (*sig != 0)
 		{
+			clrscr_down(l);
 			l->s[0] = '\0';
 			break ;
-		}*/
+		}
 		l->wincol = tgetnum("co");
 		l->winrow = tgetnum("li");
 		tabulation(l, env, &ev, prompt);

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/02 08:53:14 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 08:52:03 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 11:04:56 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "xmalloc.h"
 #include "process_cmd.h"
 
-t_hash	*hash_new(void)
+t_hash		*hash_new(void)
 {
 	t_hash	*hash;
 
@@ -28,7 +28,7 @@ t_hash	*hash_new(void)
 	return (hash);
 }
 
-void	hash_del(t_hash *hash)
+void		hash_del(t_hash *hash)
 {
 	t_hash	*tmp;
 	int		i;
@@ -62,7 +62,7 @@ unsigned	hash_key(char *cmd)
 	return (key % SZHASH);
 }
 
-t_hash	*hash_exist(t_hash *hash, char *cmd)
+t_hash		*hash_exist(t_hash *hash, char *cmd)
 {
 	unsigned	key;
 	t_hash		*tmp;
@@ -74,7 +74,7 @@ t_hash	*hash_exist(t_hash *hash, char *cmd)
 	return (tmp);
 }
 
-t_hash	*hash_nameupdate(t_hash *hash, char *cmd)
+t_hash		*hash_nameupdate(t_hash *hash, char *cmd)
 {
 	t_hash	*new;
 	t_hash	*tmp;
@@ -97,7 +97,7 @@ t_hash	*hash_nameupdate(t_hash *hash, char *cmd)
 	return (hash);
 }
 
-t_hash	*hash_insert(t_hash *hash, char *cmd, char *fullpath)
+t_hash		*hash_insert(t_hash *hash, char *cmd, char *fullpath)
 {
 	unsigned	key;
 	t_hash		*tmp;
@@ -121,7 +121,7 @@ t_hash	*hash_insert(t_hash *hash, char *cmd, char *fullpath)
 	return (hash);
 }
 
-void	hash_addfile(t_hash *hash, char *path)
+void		hash_addfile(t_hash *hash, char *path)
 {
 	struct dirent	*dp;
 	DIR				*dirp;

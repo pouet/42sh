@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 09:01:40 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 11:11:39 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,22 @@ int		dup_fd(t_symbol sym, char *redir, char *word)
 	return (0);
 }
 
+#include <sys/ioctl.h>
+#include <signal.h>
+
+static int	g_sigint_line;
+
+void	sigint_line(int sig)
+{
+	char	c;
+
+	(void)sig;
+	c = '\n';
+	g_sigint_line = 1;
+	ioctl(0, TIOCSTI, &c);
+	signal(SIGINT, SIG_IGN);
+}
+
 int		heredoc(t_symbol sym, char *redir, char *word)
 {
 	int		fd[2];
@@ -105,9 +121,11 @@ int		heredoc(t_symbol sym, char *redir, char *word)
 	(void)sym;
 	(void)redir;
 	s = ft_strnew(1);
+	signal(SIGINT, sigint_line);
+	g_sigint_line = 0;
 	while (1)
 	{
-		t = read_line(">> ", NULL, NULL);
+		t = read_line(">> ", NULL, NULL, &g_sigint_line);
 		if (t == NULL || ft_strcmp(t, word) == 0)
 			break ;
 		tmp = ft_strjoin(s, t);
@@ -120,6 +138,7 @@ int		heredoc(t_symbol sym, char *redir, char *word)
 	pipe(fd);
 	write(fd[1], s, ft_strlen(s));
 	free(s);
+	signal(SIGINT, SIG_IGN);
 	return (close(fd[1]) < 0 || dup2(fd[0], 0) < 0 || close(fd[0]) < 0);
 }
 
