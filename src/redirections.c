@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 11:11:39 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 11:42:51 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int		dup_fd(t_symbol sym, char *redir, char *word)
 
 static int	g_sigint_line;
 
-void	sigint_line(int sig)
+static void	sigint_line(int sig)
 {
 	char	c;
 

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:33:59 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 11:09:49 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 11:40:51 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "ft_env.h"
 
-typedef struct	s_line
+typedef struct		s_line
 {
 	char			*s;
 	int				i;
@@ -30,7 +30,7 @@ typedef struct	s_line
 	int				winrow;
 	int				curcol;
 	int				currow;
-}				t_line;
+}					t_line;
 
 typedef struct		s_history
 {
