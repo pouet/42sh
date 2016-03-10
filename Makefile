@@ -6,14 +6,19 @@
 #    By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/01 10:58:46 by nchrupal          #+#    #+#              #
-#    Updated: 2016/02/25 10:46:27 by nchrupal         ###   ########.fr        #
+#    Updated: 2016/03/10 14:37:27 by nchrupal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC_NAME = $(sort main.c lexer.c parser.c ft_env.c expand.c error.c\
 		   process_cmd.c get_opts.c ft_setenv.c ft_cd.c ft_exit.c\
-		   redirections.c events.c xmalloc.c colors.c initterms.c tty.c\
-		   print.c read_line.c history.c clipboard.c hashtable.c completion.c)
+		   redirections.c events.c xmalloc.c colors.c initterms.c\
+		   print.c read_line.c history.c clipboard.c hashtable.c completion.c\
+		   fifo.c getline.c move.c move_up_word.c print_line.c keys.c\
+		   addchar.c ft_env_misc.c ft_env_misc2.c hashtable2.c ft_cd_misc.c\
+		   ft_cd_del.c lexer2.c parser2.c parser3.c redirections2.c\
+		   save_restore.c pipe_cmd.c search_cmd.c cmd_completion.c\
+		   path_completion.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 LIBFT_PATH = ./libft/
@@ -47,7 +52,7 @@ ft_printf:
 
 $(NAME): $(OBJ)
 	@printf "%-50s" "create executable "$(notdir $@)...
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $(NAME) -g3 -gdwarf-2 -O0
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $(NAME) -g3 -gdwarf-2 -O0 -fsanitize=address
 	@printf "\e[1;32m[OK]\e[0m\n"
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
