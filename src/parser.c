@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:07:22 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:32:59 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "parser.h"
 #include "lexer.h"
 #include "error.h"
+#include "xmalloc.h"
 
 t_tree	*identifiers(t_tree *tree, t_token *token, int *index)
 {
@@ -86,7 +87,7 @@ char	**tree_totab(t_tree *tree)
 	int		j;
 	char	**tab;
 
-	tab = malloc((BUFF_SZ + 1) * sizeof(*tab));
+	tab = xmalloc((BUFF_SZ + 1) * sizeof(*tab));
 	i = 0;
 	j = 0;
 	while (j < tree->nchild)

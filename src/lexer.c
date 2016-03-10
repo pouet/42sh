@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:25:49 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:00:35 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:32:30 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "libft.h"
 #include "lexer.h"
 #include "error.h"
+#include "xmalloc.h"
 
 #define X(e, s, len) { s, len },
 
@@ -101,7 +102,7 @@ t_token	*lexer(char *s)
 			break ;
 		i++;
 	}
-	tmp = malloc((i + 1) * sizeof(*tmp));
+	tmp = xmalloc((i + 1) * sizeof(*tmp));
 	ft_memcpy(tmp, token, (i + 1) * sizeof(*tmp));
 	return (tmp);
 }

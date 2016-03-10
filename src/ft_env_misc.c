@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 12:06:07 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:13:57 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 15:32:04 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 #include "libft.h"
 #include "parser.h"
 #include "ft_setenv.h"
+#include "xmalloc.h"
 
 t_env	*env_newelement(char *s)
 {
 	const size_t	len = BUFF_SZ + 1;
 	t_env			*tmp;
 
-	tmp = ft_lstnew(malloc(len * sizeof(char)), len);
+	tmp = ft_lstnew(xmalloc(len * sizeof(char)), len);
 	if (tmp == NULL)
 		return (NULL);
 	ft_strncpy(tmp->content, s, BUFF_SZ);
@@ -99,13 +100,13 @@ char	**env_totab(t_env *env)
 		p = p->next;
 		n++;
 	}
-	tab = malloc((n + 1) * sizeof(*tab));
+	tab = xmalloc((n + 1) * sizeof(*tab));
 	tab[n] = NULL;
 	i = 0;
 	p = env->next;
 	while (i < n)
 	{
-		tab[i] = malloc((BUFF_SZ + 1) * sizeof(**tab));
+		tab[i] = xmalloc((BUFF_SZ + 1) * sizeof(**tab));
 		ft_strncpy(tab[i], p->content, BUFF_SZ);
 		p = p->next;
 		i++;
