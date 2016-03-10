@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/02 10:53:07 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 11:04:20 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 12:19:14 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define HASHTABLE_H
 
 # include "lexer.h"
+# include "ft_env.h"
 
 # define SZHASH 97
 

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/09 09:12:33 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 08:54:51 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 12:26:23 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,112 +37,6 @@ char	*get_nextid(char *s, char *name)
 	}
 	name[i] = '\0';
 	return (s);
-}
-
-int		del_multipleslash(char *s, int len)
-{
-	char	*t;
-	char	*sav;
-
-	sav = s;
-	while (*s)
-	{
-		if (*s == '/' && *(s + 1) == '/')
-		{
-			t = s + 1;
-			while (*t == '/')
-				t++;
-			ft_strcpy(s + 1, t);
-			len -= t - (s + 1);
-		}
-		s++;
-	}
-	sav[len] = '\0';
-	return (len);
-}
-
-int		del_finalslash(char *s, int len)
-{
-	int		i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	if (i > 1 && s[i - 1] == '/')
-	{
-		s[i - 1] = '\0';
-		len--;
-	}
-	return (len);
-}
-
-int		del_dotslash(char *s, int len)
-{
-	char	name[BUFF_SZ + 1];
-	char	*t;
-	int		i;
-
-	i = 0;
-	while (i < len && s[i])
-	{
-		len = del_multipleslash(s, len);
-		len = del_finalslash(s, len);
-		t = get_nextid(s + i, name);
-		if (ft_strcmp(name, ".") == 0)
-		{
-			ft_strcpy(s + i, t);
-			len--;
-			s[len] = '\0';
-		}
-		else
-		{
-			i += t - (s + i);
-		}
-	}
-	s[len] = '\0';
-	return (len);
-}
-
-char	*move_dotdot(char *s, char *t, int *len, int i)
-{
-	while (i > 0 && s[i - 1] != '/')
-		i--;
-	if (i == 0)
-	{
-		eprintf("cd: root have no parent...: '/' used instead\n");
-		ft_strcpy(s + 1, s + 3);
-		*len -= 2;
-	}
-	else
-	{
-		ft_strcpy(s + i, t);
-		*len = *len - (t - (s + i));
-	}
-	s[*len] = '\0';
-	return (s);
-}
-
-int		del_dotdot(char *s, int len)
-{
-	char	name[BUFF_SZ + 1];
-	char	*t;
-	int		i;
-
-	i = 0;
-	while (i < len && s[i])
-	{
-		len = del_multipleslash(s, len);
-		len = del_finalslash(s, len);
-		t = get_nextid(s + i, name);
-		if (ft_strcmp(name, "..") == 0)
-		{
-			s = move_dotdot(s, t, &len, i);
-			i = 0;
-		}
-		else
-			i += t - (s + i);
-	}
-	return (len);
 }
 
 int		convert_canonical(char *s)
@@ -186,67 +80,6 @@ t_flags	get_cdflags(t_tree *tree, int *i)
 	}
 	flags = (flags == 0x0 || flags == 0x3) ? 0x1 : flags;
 	return (flags);
-}
-
-int		set_cdstring(t_env *env, char *s)
-{
-	t_env		*home;
-	t_env		*oldpwd;
-
-	home = env_getname(env, "HOME");
-	oldpwd = env_getname(env, "OLDPWD");
-	if (s[0] == '\0' && home == NULL)
-		return (eprintf("cd: HOME not set\n"));
-	else if (s[0] == '\0')
-		ft_strncpy(s, (char *)home->content + 5, BUFF_SZ);
-	else if (s[0] == '/' || (s[0] == '.' && s[1] == '.'))
-		ft_strncpy(s, s, BUFF_SZ);
-	else if (ft_strcmp(s, "-") == 0)
-	{
-		if (oldpwd == NULL)
-			return (eprintf("cd: OLDPWD not set\n"));
-		ft_strncpy(s, (char *)oldpwd->content + 7, BUFF_SZ);
-	}
-	return (0);
-}
-
-int		set_cdpath(t_env *env, char *path, char *s)
-{
-	t_env	*pwd;
-	int		len;
-
-	pwd = env_getname(env, "PWD");
-	if (pwd == NULL)
-	{
-		ft_setenv_byname(env, "PWD=");
-		pwd = env_getname(env, "PWD");
-	}
-	path[0] = '\0';
-	if (s[0] != '/')
-	{
-		ft_strncpy(path, (char *)pwd->content + 4, BUFF_SZ);
-		len = ft_strlen(path);
-		if (len > 0 && path[len - 1] != '/')
-			ft_strlcat(path, "/", BUFF_SZ);
-	}
-	ft_strlcat(path, s, BUFF_SZ);
-	return (0);
-}
-
-int		set_cdenv(t_env *env, char *path, char *s, t_flags flags)
-{
-	t_env	*pwd;
-
-	pwd = env_getname(env, "PWD");
-	ft_strncpy(s, "OLDPWD=", BUFF_SZ);
-	ft_strlcat(s, ((char *)pwd->content) + 4, BUFF_SZ);
-	ft_setenv_byname(env, s);
-	ft_strncpy(s, "PWD=", BUFF_SZ);
-	if (flags & g_cd_valopts[1])
-		getcwd(path, BUFF_SZ);
-	ft_strlcat(s, path, BUFF_SZ);
-	ft_setenv_byname(env, s);
-	return (0);
 }
 
 int		changedir(char *path)

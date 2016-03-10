@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.h                                           :+:      :+:    :+:   */
+/*   move.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/03 16:14:19 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:04:57 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/03/10 11:45:43 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/03/10 11:50:14 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPAND_H
-# define EXPAND_H
+#ifndef MOVE_H
+# define MOVE_H
 
-# include "ft_env.h"
-# include "parser.h"
+# include "read_line.h"
 
-void	expand_brace(t_tree *tree, t_env *env);
-void	expand_tilde(t_tree *tree, t_env *env);
-void	expand_all(t_tree *tree, t_env *env);
+void	movecurlr(t_line *l, int move);
+void	movelr(t_line *l, int move);
+void	movecur_backtoi(t_line *l);
+void	moveup(t_line *l);
+void	movedown(t_line *l);
+void	moveupdown(t_line *l, int move);
+void	moveword(t_line *l, int move);
+void	move_homeend(t_line *l, int move);
 
 #endif

@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.h                                           :+:      :+:    :+:   */
+/*   addchar.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/03 16:14:19 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:04:57 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/03/10 12:01:06 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/03/10 12:02:55 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPAND_H
-# define EXPAND_H
+#ifndef ADDCHAR_H
+# define ADDCHAR_H
 
-# include "ft_env.h"
-# include "parser.h"
+# include "read_line.h"
 
-void	expand_brace(t_tree *tree, t_env *env);
-void	expand_tilde(t_tree *tree, t_env *env);
-void	expand_all(t_tree *tree, t_env *env);
+char	*add_char(t_line *l, char c);
+void	delchar(t_line *l, int move);
 
 #endif

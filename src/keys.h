@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.h                                           :+:      :+:    :+:   */
+/*   keys.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/03 16:14:19 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:04:57 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/03/10 11:56:32 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/03/10 12:03:28 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPAND_H
-# define EXPAND_H
+#ifndef KEYS_H
+# define KEYS_H
 
-# include "ft_env.h"
-# include "parser.h"
+# include "read_line.h"
+# include "history.h"
+# include "events.h"
 
-void	expand_brace(t_tree *tree, t_env *env);
-void	expand_tilde(t_tree *tree, t_env *env);
-void	expand_all(t_tree *tree, t_env *env);
+void	clipboard_key(t_line *l, int move);
+void	histo_key(t_history *h, t_line *l, int move);
+int		key(t_line *l, t_history *h, t_events *ev);
+void	tabulation(t_line *l, t_env *env, t_events *ev, char *prompt);
+int		character(t_line *l, t_events *ev);
 
 #endif

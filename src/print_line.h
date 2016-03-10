@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.h                                           :+:      :+:    :+:   */
+/*   print_line.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/03 16:14:19 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:04:57 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/03/10 11:52:47 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/03/10 12:03:11 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPAND_H
-# define EXPAND_H
+#ifndef PRINT_LINE_H
+# define PRINT_LINE_H
 
-# include "ft_env.h"
-# include "parser.h"
+# include "read_line.h"
 
-void	expand_brace(t_tree *tree, t_env *env);
-void	expand_tilde(t_tree *tree, t_env *env);
-void	expand_all(t_tree *tree, t_env *env);
+int		print_line_initval(t_line *l, char *prompt);
+void	print_line(t_line *l, char *prompt);
+void	clrscr_down(t_line *l);
+void	putprompt_lastline(char *prompt);
 
 #endif

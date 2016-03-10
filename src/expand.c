@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/03 15:15:52 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/25 08:57:28 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 12:04:50 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,6 @@ void	expand_tilde(t_tree *tree, t_env *env)
 	}
 }
 
-void	variable_substitution(t_tree *tree, t_env *env)
-{
-	(void)tree;
-	(void)env;
-}
-
-void	command_substitution(t_tree *tree, t_env *env)
-{
-	(void)tree;
-	(void)env;
-}
-
 void	quote_removal(t_tree *tree, t_env *env)
 {
 	(void)env;
@@ -94,8 +82,6 @@ void	expand_all(t_tree *tree, t_env *env)
 		}
 		expand_brace(tree, env);
 		expand_tilde(tree, env);
-		variable_substitution(tree, env);
-		command_substitution(tree, env);
 		quote_removal(tree, env);
 	}
 }
