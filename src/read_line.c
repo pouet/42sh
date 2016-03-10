@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 09:28:58 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 09:48:09 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,7 @@ void	movelr(t_line *l, int move)
 	if (move == K_LEFT && l->i > 0)
 	{
 		l->i--;
-		l->curcol--;
-		if (l->curcol < 0)
+		if (--l->curcol < 0)
 		{
 			len = l->i;
 			l->i = 0;
@@ -110,8 +109,7 @@ void	movelr(t_line *l, int move)
 	{
 		l->i++;
 		l->curcol++;
-		if (l->curcol >= l->wincol ||
-			(l->i < l->len && l->s[l->i - 1] == '\n'))
+		if (l->curcol >= l->wincol || (l->i < l->len && l->s[l->i - 1] == '\n'))
 		{
 			l->currow++;
 			l->curcol = 0;
@@ -150,15 +148,24 @@ void	putprompt_lastline(char *prompt)
 	ft_putstr(prompt + len);
 }
 
-void	print_line(t_line *l, char *prompt)
+int		print_line_initval(t_line *l, char *prompt)
 {
-	int		i;
-
+	if (l->s == NULL)
+		return (-1);
 	l->oldrow = l->row;
 	l->oldcol = l->col;
 	putprompt_lastline(prompt);
 	l->col = l->lenprompt;
 	l->row = 0;
+	return (0);
+}
+
+void	print_line(t_line *l, char *prompt)
+{
+	int		i;
+
+	if (print_line_initval(l, prompt) < 0)
+		return ;
 	i = 0;
 	while (i < l->len)
 	{
@@ -197,7 +204,6 @@ t_line	*growup_line(t_line *l)
 
 char	*add_char(t_line *l, char c)
 {
-
 	if (c == '\n')
 		return (l->s);
 	if (l->len + 1 >= l->lenmax)
@@ -216,46 +222,56 @@ char	*add_char(t_line *l, char c)
 	return (l->s);
 }
 
-void	moveupdown(t_line *l, int move)
+void	moveup(t_line *l)
 {
 	int		len;
 	int		rowsav;
 	int		colsav;
 
-	if (move == K_ALTUP)
-	{
-		rowsav = l->currow;
-		colsav = l->curcol;
-		while (l->i > 0 && l->curcol > 0)
-			movelr(l, K_LEFT);
+	rowsav = l->currow;
+	colsav = l->curcol;
+	while (l->i > 0 && l->curcol > 0)
 		movelr(l, K_LEFT);
-		while (l->i > 0 && l->curcol > 0)
-			movelr(l, K_LEFT);
-		if (l->currow != rowsav)
-		{
-			len = colsav;
-			if (l->currow == 0)
-				len -= l->lenprompt;
-			while (l->i < l->len && l->s[l->i] != '\n' && len > 0)
-			{
-				movelr(l, K_RIGHT);
-				len--;
-			}
-		}
-	}
-	else if (move == K_ALTDWN)
+	movelr(l, K_LEFT);
+	while (l->i > 0 && l->curcol > 0)
+		movelr(l, K_LEFT);
+	if (l->currow != rowsav)
 	{
-		rowsav = l->currow;
-		colsav = l->curcol;
-		while (l->i < l->len && l->curcol != 0)
-			movelr(l, K_RIGHT);
 		len = colsav;
+		if (l->currow == 0)
+			len -= l->lenprompt;
 		while (l->i < l->len && l->s[l->i] != '\n' && len > 0)
 		{
 			movelr(l, K_RIGHT);
 			len--;
 		}
 	}
+}
+
+void	movedown(t_line *l)
+{
+	int		len;
+	int		rowsav;
+	int		colsav;
+
+	rowsav = l->currow;
+	colsav = l->curcol;
+	while (l->i < l->len && l->curcol != 0)
+		movelr(l, K_RIGHT);
+	len = colsav;
+	while (l->i < l->len && l->s[l->i] != '\n' && len > 0)
+	{
+		movelr(l, K_RIGHT);
+		len--;
+	}
+}
+
+void	moveupdown(t_line *l, int move)
+{
+	if (move == K_ALTUP)
+		moveup(l);
+	else if (move == K_ALTDWN)
+		movedown(l);
 }
 
 void	moveword(t_line *l, int move)
@@ -355,7 +371,7 @@ int		lenprompt(char *prompt)
 	len = ft_strlen(prompt);
 	while (prompt[i])
 	{
-		if ((s = ft_strchr(prompt + i, '\e')) != NULL &&
+		if ((s = ft_strchr(prompt + i, '\x1b')) != NULL &&
 			(t = ft_strchr(s + 1, 'm')) != NULL)
 		{
 			prompt = t + 1;
@@ -380,6 +396,7 @@ void	histo_key(t_history *h, t_line *l, int move)
 	while (l->i < l->len)
 		movelr(l, K_RIGHT);
 }
+
 /*
 #include <sys/ioctl.h>
 #include <signal.h>
@@ -468,7 +485,7 @@ char	*read_line(char *prompt, t_history *h, t_env *env)
 		l->winrow = tgetnum("li");
 		tabulation(l, env, &ev, prompt);
 		clrscr_down(l);
-		if (character(l, &ev, prompt) != 0 || key(l, h, &ev, prompt) != 0)
+		if (character(l, &ev) != 0 || key(l, h, &ev) != 0)
 			break ;
 		print_line(l, prompt);
 	}
