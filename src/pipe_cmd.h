@@ -1,23 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   completion.h                                       :+:      :+:    :+:   */
+/*   pipe_cmd.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/03/10 08:29:23 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:38:21 by nchrupal         ###   ########.fr       */
+/*   Created: 2016/03/10 14:23:26 by nchrupal          #+#    #+#             */
+/*   Updated: 2016/03/10 14:24:17 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef COMPLETION_H
-# define COMPLETION_H
+#ifndef PIPE_CMD_H
+# define PIPE_CMD_H
 
 # include "ft_env.h"
-# include "read_line.h"
+# include "parser.h"
 
-int		completion(t_line *l, t_env *env);
-int		is_firstword(t_line *l, char *s);
-int		add_completion(t_line *l, char *s, int len);
+void	child_pipe(t_tree *tree, t_env *env, t_env *new, int fd_pipe[2]);
+int		do_pipe(t_tree *tree, t_env *env, t_env *new);
 
 #endif

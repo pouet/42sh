@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:18:33 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 11:07:32 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 14:01:21 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@
 # define X20 X( S_LPAR,			"(",   1)
 # define X21 X( S_RPAR,			")",   1)
 # define X22 X( S_EQUAL,		"=",   1)
-# define X23 //X( S_PLUS,			"+",   1)
+# define X23
 # define X24 X( S_IDENT,		"",    0)
 # define X25 X( S_NUMBER,		"",    0)
 # define X26 X( S_BUILTIN,		"",    0)
@@ -62,6 +62,7 @@
 ** X(S_STAR, { "*", 1 })\
 ** X(S_INTERROGATION, { "?", 1 })\
 ** X(S_MINUS, { "-", 1 })
+** X( S_PLUS,			"+",   1)
 */
 
 # define X(e, s, len) e,
@@ -91,5 +92,12 @@ typedef struct		s_token
 extern t_string		g_symbol[S_MAX + 1];
 
 t_token				*lexer(char *s);
+int					is_token(char *s);
+char				*get_quoted_string(t_token *token, char *s);
+char				*get_redir(t_token *token, char *s);
+char				*get_name(t_token *token, char *s);
+char				*get_symbol(t_token *token, char *s);
+char				*get_separator(t_token *token, char *s);
+t_token				get_next_token(char *s, char **t);
 
 #endif

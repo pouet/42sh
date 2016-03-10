@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 11:44:21 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 11:46:57 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 14:31:27 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,16 @@ void	movecur_backtoi(t_line *l)
 		mv_cur("DO", 0, l->currow);
 	if (l->curcol > 0)
 		mv_cur("RI", 0, l->curcol);
+}
+
+void	movecur_last(t_line *l)
+{
+	if (l->currow > 0)
+		mv_cur("UP", 0, l->currow);
+	ft_tputs("cr");
+	if (l->row > 0)
+		mv_cur("DO", 0, l->row);
+	if (l->col > 0)
+		mv_cur("RI", 0, l->col);
+	ft_putendl("");
 }

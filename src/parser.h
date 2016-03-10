@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:47 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/02/22 11:02:56 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/10 14:06:16 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,15 @@ typedef struct		s_tree
 }					t_tree;
 
 t_tree				*parser(t_token *token);
+t_tree				*tree_new(enum e_nodetype type, t_token *token);
 void				next_token(t_token *token, int *index);
+int					found(t_token *token, int *index, t_symbol symbol);
+int					accept(t_token *token, int *index, t_symbol symbol);
+int					token_isredir(t_token *token, int *index);
+int					token_isstring(t_token *token, int *index);
+t_tree				*semicolon(t_tree *tree, t_token *token, int *index);
+t_tree				*pipetree(t_tree *tree, t_token *token, int *index);
+t_tree				*identifiers(t_tree *tree, t_token *token, int *index);
 t_tree				*factor(t_tree *tree, t_token *token, int *index);
 t_tree				*command(t_tree *tree, t_token *token, int *index);
 char				**tree_totab(t_tree *tree);
