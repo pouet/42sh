@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:25:01 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 08:54:37 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/14 09:26:38 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@ void	histo_load(t_history *h)
 	h->dll = dll_newlist();
 	h->new = dll_createnode("", 1);
 	h->cur = h->new;
+}
+
+void	histo_del(t_history *h)
+{
+	dll_dellist(h->dll);
+	free(h->new->data);
+	free(h->new);
 }
 
 int		histo_add(t_history *h, char *s)

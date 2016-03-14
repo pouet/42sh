@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 14:06:27 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 11:40:25 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/14 09:25:35 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ void	mainloop(void)
 			set_terms();
 		}
 	}
+	free(env);
+	histo_del(&h);
 }
 
 int		main(int ac, char **av)
