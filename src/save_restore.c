@@ -26,6 +26,9 @@ void	restore_stdfd(int fd[3])
 	dup2(fd[0], 0);
 	dup2(fd[1], 1);
 	dup2(fd[2], 2);
+	close(fd[0]);
+	close(fd[1]);
+	close(fd[2]);
 }
 
 void	restore_sigdfl(void)

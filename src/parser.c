@@ -37,7 +37,7 @@ t_tree	*identifiers(t_tree *tree, t_token *token, int *index)
 				tree->child[tree->nchild++] = tree_new(T_NAME, token + *index);
 			next_token(token, index);
 		}
-		tree = command(tree, token, index);
+//		tree = command(tree, token, index);
 	}
 	return (tree);
 }
@@ -53,7 +53,11 @@ t_tree	*command(t_tree *tree, t_token *token, int *index)
 	while (accept(token, index, S_SEPARATOR))
 		;
 	tree = identifiers(tree, token, index);
+	while (accept(token, index, S_SEPARATOR))
+		;
 	tree = pipetree(tree, token, index);
+	while (accept(token, index, S_SEPARATOR))
+		;
 	tree = semicolon(tree, token, index);
 	return (tree);
 }

@@ -68,8 +68,11 @@ t_tree	*semicolon(t_tree *tree, t_token *token, int *index)
 
 	if (accept(token, index, S_SEMICOL))
 	{
+//		printf("%p\n", tree->child[0]->token->s);
+//		printf("%s\n", tree->child[0]->token->s);
+		printf("%x\n", tree->type);
 		node = tree_new(T_SEMICOL, NULL);
-		if (tree == NULL || tree->type != T_CMD)
+		if (tree == NULL || tree->type == T_REDIR || tree->type == T_NAME)// || tree->type != T_CMD)
 		{
 			g_errno = E_SYNTAX;
 			eprintf("syntax error near unexpexted token ';'\n");
@@ -79,8 +82,18 @@ t_tree	*semicolon(t_tree *tree, t_token *token, int *index)
 			node->child[0] = tree;
 		tree = node;
 		tree->child[1] = command(tree->child[1], token, index);
-		node->nchild = 2;
+		tree->nchild = 2;
 	}
+	return (tree);
+}
+
+t_tree	*pipe_command(t_tree *tree, t_token *token, int *index)
+{
+	while (accept(token, index, S_SEPARATOR))
+		;
+	tree = identifiers(tree, token, index);
+	tree = pipetree(tree, token, index);
+//	tree = semicolon(tree, token, index);
 	return (tree);
 }
 
@@ -100,7 +113,7 @@ t_tree	*pipetree(t_tree *tree, t_token *token, int *index)
 		else
 			node->child[0] = tree;
 		tree = node;
-		tree->child[1] = command(tree->child[1], token, index);
+		tree->child[1] = pipe_command(tree->child[1], token, index);
 		if (tree->child[1] == NULL)
 		{
 			g_errno = E_SYNTAX;

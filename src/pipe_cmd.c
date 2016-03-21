@@ -47,6 +47,7 @@ int		do_pipe(t_tree *tree, t_env *env, t_env *new)
 		close(fd_pipe[0]);
 		process_cmd(tree->child[1], env, new);
 		dup2(fd_sav, 0);
+		close(fd_sav);
 		while (waitpid(pid, &stat_loc, WNOHANG) == 0)
 			;
 	}
