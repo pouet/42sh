@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:37 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 15:32:59 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 15:10:59 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ t_tree	*identifiers(t_tree *tree, t_token *token, int *index)
 				tree->child[tree->nchild++] = tree_new(T_NAME, token + *index);
 			next_token(token, index);
 		}
-//		tree = command(tree, token, index);
 	}
 	return (tree);
 }

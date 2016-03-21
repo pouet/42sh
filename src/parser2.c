@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 14:01:55 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:03:45 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 15:15:20 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,8 @@ t_tree	*semicolon(t_tree *tree, t_token *token, int *index)
 
 	if (accept(token, index, S_SEMICOL))
 	{
-//		printf("%p\n", tree->child[0]->token->s);
-//		printf("%s\n", tree->child[0]->token->s);
-		printf("%x\n", tree->type);
 		node = tree_new(T_SEMICOL, NULL);
-		if (tree == NULL || tree->type == T_REDIR || tree->type == T_NAME)// || tree->type != T_CMD)
+		if (tree == NULL || tree->type == T_REDIR || tree->type == T_NAME)
 		{
 			g_errno = E_SYNTAX;
 			eprintf("syntax error near unexpexted token ';'\n");
@@ -84,16 +81,6 @@ t_tree	*semicolon(t_tree *tree, t_token *token, int *index)
 		tree->child[1] = command(tree->child[1], token, index);
 		tree->nchild = 2;
 	}
-	return (tree);
-}
-
-t_tree	*pipe_command(t_tree *tree, t_token *token, int *index)
-{
-	while (accept(token, index, S_SEPARATOR))
-		;
-	tree = identifiers(tree, token, index);
-	tree = pipetree(tree, token, index);
-//	tree = semicolon(tree, token, index);
 	return (tree);
 }
 

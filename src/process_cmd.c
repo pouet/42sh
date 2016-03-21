@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/04 12:12:11 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 15:01:20 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 15:14:42 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,14 +133,13 @@ int		fork_process(t_tree *tree, t_env *env, t_env *new)
 	restore_stdfd(fd_sav);
 	return (0);
 }
-int i;
+
 int		process_cmd(t_tree *tree, t_env *env, t_env *new)
 {
 	if (tree)
 	{
 		if (tree->type == T_CMD)
 		{
-			printf("cmd: %d: %s\n", i++, tree->child[0]->token->s);
 			if (find_cmd(tree->child[0]->token, env) != 0)
 				fork_process(tree, env, new);
 			else if (g_errno == E_NOERROR)
@@ -149,14 +148,11 @@ int		process_cmd(t_tree *tree, t_env *env, t_env *new)
 		}
 		else if (tree->type == T_SEMICOL)
 		{
-			printf("semicol0: %d\n", i++);
 			process_cmd(tree->child[0], env, new);
-			printf("semicol1: %d\n", i++);
 			process_cmd(tree->child[1], env, new);
 		}
 		else if (tree->type == T_PIPE)
 		{
-			printf("pipe: %d\n", i++);
 			do_pipe(tree, env, new);
 		}
 		else if (g_errno == E_NOERROR)

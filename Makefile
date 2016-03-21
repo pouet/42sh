@@ -6,7 +6,7 @@
 #    By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/01 10:58:46 by nchrupal          #+#    #+#              #
-#    Updated: 2016/03/10 14:37:27 by nchrupal         ###   ########.fr        #
+#    Updated: 2016/03/21 17:57:20 by nchrupal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ SRC_NAME = $(sort main.c lexer.c parser.c ft_env.c expand.c error.c\
 		   print.c read_line.c history.c clipboard.c hashtable.c completion.c\
 		   fifo.c getline.c move.c move_up_word.c print_line.c keys.c\
 		   addchar.c ft_env_misc.c ft_env_misc2.c hashtable2.c ft_cd_misc.c\
-		   ft_cd_del.c lexer2.c parser2.c parser3.c redirections2.c\
+		   ft_cd_del.c lexer2.c parser2.c parser3.c parser4.c redirections2.c\
 		   save_restore.c pipe_cmd.c search_cmd.c cmd_completion.c\
-		   path_completion.c)
+		   path_completion.c histo_search.c)
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 LIBFT_PATH = ./libft/

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 12:00:52 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 18:00:54 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include "print_line.h"
 #include "keys.h"
 #include "addchar.h"
+#include "histo_search.h"
 
 t_line	*new_line(int lenp)
 {
@@ -109,20 +110,17 @@ char	*read_line(char *prompt, t_history *h, t_env *env, int *sig)
 	l = new_line(lenprompt(prompt));
 	while ((ret = getevents(&ev)) > 0)
 	{
-		if (*sig != 0)
-		{
-			clrscr_down(l);
-			l->s[0] = '\0';
-			break ;
-		}
 		l->wincol = tgetnum("co");
 		l->winrow = tgetnum("li");
 		tabulation(l, env, &ev, prompt);
 		clrscr_down(l);
-		if (character(l, &ev) != 0 || key(l, h, &ev) != 0)
+		histo_search(l, h, &ev);
+		if (*sig != 0 || character(l, &ev) != 0 || key(l, h, &ev) != 0)
 			break ;
 		print_line(l, prompt);
 	}
+	if (*sig != 0)
+		l->s[0] = '\0';
 	print_line(l, prompt);
 	ft_putendl("");
 	return (linetos(l));

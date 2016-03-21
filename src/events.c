@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/20 11:40:21 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 08:45:31 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 16:26:01 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 static void	set_keys(char **keys)
 {
+	keys[K_NONE] = "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF";
 	keys[K_UP] = tgetstr("ku", NULL);
 	keys[K_DOWN] = tgetstr("kd", NULL);
 	keys[K_LEFT] = tgetstr("kl", NULL);
@@ -66,6 +67,7 @@ int			getevents(t_events *ev)
 	char		buf[10];
 	int			ret;
 
+	ev->c = K_NONE;
 	bzero(buf, 10);
 	ret = read(0, buf, 9);
 	if (ret <= 0)
