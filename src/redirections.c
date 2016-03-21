@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/11 11:06:05 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:10:28 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 18:26:29 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 #include "read_line.h"
 #include "initterms.h"
 
+/*
+** if (*s == '-')
+**		sign = -1 * (*s++ == '-');
+*/
+
 int		get_nbr(char *s, char **t)
 {
 	int				sign;
@@ -29,8 +34,6 @@ int		get_nbr(char *s, char **t)
 
 	n = 0;
 	sign = 1;
-	if (*s == '-')
-		sign = -1 * (*s++ == '-');
 	while (n < (unsigned long)INT_MAX + 1 && ft_isdigit(*s))
 		n = n * 10 + *s++ - '0';
 	if (n > (unsigned long)INT_MAX ||

@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/21 17:56:17 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/21 17:57:09 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 18:58:17 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include "libft.h"
 #include "read_line.h"
+#include "histo_search.h"
 #include "events.h"
 #include "addchar.h"
 

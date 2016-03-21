@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/10 14:08:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 15:35:47 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 18:58:21 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int			redir(t_symbol sym, char *redir, char *word)
 	if (fd < 0)
 		return (eprintf("error: %s: unable to open the file\n", redir));
 	dup2(fd, fd_src);
+	close(fd);
 	return (0);
 }
 

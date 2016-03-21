@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 10:41:47 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/10 14:06:16 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 15:15:16 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int					token_isredir(t_token *token, int *index);
 int					token_isstring(t_token *token, int *index);
 t_tree				*semicolon(t_tree *tree, t_token *token, int *index);
 t_tree				*pipetree(t_tree *tree, t_token *token, int *index);
+t_tree				*pipe_command(t_tree *tree, t_token *token, int *index);
 t_tree				*identifiers(t_tree *tree, t_token *token, int *index);
 t_tree				*factor(t_tree *tree, t_token *token, int *index);
 t_tree				*command(t_tree *tree, t_token *token, int *index);

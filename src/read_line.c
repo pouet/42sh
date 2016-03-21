@@ -6,7 +6,7 @@
 /*   By: nchrupal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 10:15:28 by nchrupal          #+#    #+#             */
-/*   Updated: 2016/03/21 18:00:54 by nchrupal         ###   ########.fr       */
+/*   Updated: 2016/03/21 18:45:53 by nchrupal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ t_line	*growup_line(t_line *l)
 
 	l->lenmax += BUFF_SZ;
 	tmp = xmalloc((l->lenmax + 1) * sizeof(*l->s));
-	ft_bzero(l->s, l->lenmax + 1);
+	ft_bzero(tmp, l->lenmax + 1);
 	ft_strcpy(tmp, l->s);
 	free(l->s);
 	l->s = tmp;
